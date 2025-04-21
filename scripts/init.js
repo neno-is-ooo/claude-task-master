@@ -235,7 +235,15 @@ function copyTemplateFile(templateName, targetPath, replacements = {}) {
 		case 'test-rules':
 			// Extract the mode name from the template name (e.g., 'architect' from 'architect-rules')
 			const mode = templateName.split('-')[0];
-			sourcePath = path.join(__dirname, '..', 'assets', 'roocode', '.roo', `rules-${mode}`, templateName);
+			sourcePath = path.join(
+				__dirname,
+				'..',
+				'assets',
+				'roocode',
+				'.roo',
+				`rules-${mode}`,
+				templateName
+			);
 			break;
 		default:
 			// For other files like env.example, gitignore, etc. that don't have direct equivalents
@@ -462,14 +470,21 @@ function createProjectStructure(addAliases) {
 
 	// Create directories
 	ensureDirectoryExists(path.join(targetDir, '.cursor', 'rules'));
-	
+
 	// Create Roo directories
 	ensureDirectoryExists(path.join(targetDir, '.roo'));
 	ensureDirectoryExists(path.join(targetDir, '.roo', 'rules'));
-	for (const mode of ['architect', 'ask', 'boomerang', 'code', 'debug', 'test']) {
+	for (const mode of [
+		'architect',
+		'ask',
+		'boomerang',
+		'code',
+		'debug',
+		'test'
+	]) {
 		ensureDirectoryExists(path.join(targetDir, '.roo', `rules-${mode}`));
 	}
-	
+
 	ensureDirectoryExists(path.join(targetDir, 'scripts'));
 	ensureDirectoryExists(path.join(targetDir, 'tasks'));
 
@@ -524,7 +539,7 @@ function createProjectStructure(addAliases) {
 
 	// Copy .roomodes for Roo Code integration
 	copyTemplateFile('.roomodes', path.join(targetDir, '.roomodes'));
-	
+
 	// Copy Roo rule files for each mode
 	const rooModes = ['architect', 'ask', 'boomerang', 'code', 'debug', 'test'];
 	for (const mode of rooModes) {

@@ -50,8 +50,8 @@ Also has references to .mdc files.`;
 		expect(convertedContent).to.include('Roo Code');
 		expect(convertedContent).to.include('roocode.com');
 		expect(convertedContent).to.include('.md');
-		expect(convertedContent).not.to.include('cursor.so');
-		expect(convertedContent).not.to.include('Cursor rule');
+		expect(convertedContent).to.not.include('cursor.so');
+		expect(convertedContent).to.not.include('Cursor rule');
 	});
 
 	it('should correctly convert tool references', () => {
@@ -108,6 +108,6 @@ This references [dev_workflow.mdc](mdc:.cursor/rules/dev_workflow.mdc) and
 		// Verify transformations
 		expect(convertedContent).to.include('(mdc:.roo/rules/dev_workflow.md)');
 		expect(convertedContent).to.include('(mdc:.roo/rules/taskmaster.md)');
-		expect(convertedContent).not.to.include('(mdc:.cursor/rules/');
+		expect(convertedContent).to.not.include('(mdc:.cursor/rules/');
 	});
 });

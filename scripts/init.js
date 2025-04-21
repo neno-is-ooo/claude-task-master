@@ -23,6 +23,7 @@ import figlet from 'figlet';
 import boxen from 'boxen';
 import gradient from 'gradient-string';
 import { isSilentMode } from './modules/utils.js';
+import { convertAllCursorRulesToRooRules } from './modules/rule-transformer.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -225,15 +226,6 @@ function copyTemplateFile(templateName, targetPath, replacements = {}) {
 			break;
 		case '.roomodes':
 			sourcePath = path.join(__dirname, '..', 'assets', 'roocode', '.roomodes');
-			break;
-		case 'dev_workflow.md':
-			sourcePath = path.join(__dirname, '..', 'assets', 'roocode', '.roo', 'rules', 'dev_workflow.md');
-			break;
-		case 'roo_rules.md':
-			sourcePath = path.join(__dirname, '..', 'assets', 'roocode', '.roo', 'rules', 'roo_rules.md');
-			break;
-		case 'self_improve.md':
-			sourcePath = path.join(__dirname, '..', 'assets', 'roocode', '.roo', 'rules', 'self_improve.md');
 			break;
 		case 'architect-rules':
 		case 'ask-rules':
@@ -522,6 +514,10 @@ function createProjectStructure(addAliases) {
 		'self_improve.mdc',
 		path.join(targetDir, '.cursor', 'rules', 'self_improve.mdc')
 	);
+
+	// Generate Roo rules from Cursor rules
+	log('info', 'Generating Roo rules from Cursor rules...');
+	convertAllCursorRulesToRooRules(targetDir);
 
 	// Copy .windsurfrules
 	copyTemplateFile('windsurfrules', path.join(targetDir, '.windsurfrules'));

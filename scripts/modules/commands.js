@@ -182,7 +182,11 @@ function registerCommands(programInstance) {
 		.description(
 			'Update multiple tasks with ID >= "from" based on new information or implementation changes'
 		)
-		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks.json')
+		.option(
+			'-f, --file <file>',
+			'Path to the tasks file',
+			'.taskmaster/tasks.json'
+		)
 		.option(
 			'--from <id>',
 			'Task ID to start updating from (tasks with ID >= this value will be updated)',
@@ -256,7 +260,11 @@ function registerCommands(programInstance) {
 		.description(
 			'Update a single specific task by ID with new information (use --id parameter)'
 		)
-		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks.json')
+		.option(
+			'-f, --file <file>',
+			'Path to the tasks file',
+			'.taskmaster/tasks.json'
+		)
 		.option('-i, --id <id>', 'Task ID to update (required)')
 		.option(
 			'-p, --prompt <text>',
@@ -408,7 +416,11 @@ function registerCommands(programInstance) {
 		.description(
 			'Update a subtask by appending additional timestamped information'
 		)
-		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks.json')
+		.option(
+			'-f, --file <file>',
+			'Path to the tasks file',
+			'.taskmaster/tasks.json'
+		)
 		.option(
 			'-i, --id <id>',
 			'Subtask ID to update in format "parentId.subtaskId" (required)'
@@ -561,7 +573,11 @@ function registerCommands(programInstance) {
 	programInstance
 		.command('generate')
 		.description('Generate task files from .taskmaster/tasks.json')
-		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks.json')
+		.option(
+			'-f, --file <file>',
+			'Path to the tasks file',
+			'.taskmaster/tasks.json'
+		)
 		.option('-o, --output <dir>', 'Output directory', '.taskmaster/tasks')
 		.action(async (options) => {
 			const tasksPath = options.file;
@@ -585,7 +601,11 @@ function registerCommands(programInstance) {
 			'-s, --status <status>',
 			'New status (todo, in-progress, review, done)'
 		)
-		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks.json')
+		.option(
+			'-f, --file <file>',
+			'Path to the tasks file',
+			'.taskmaster/tasks.json'
+		)
 		.action(async (options) => {
 			const tasksPath = options.file;
 			const taskId = options.id;
@@ -607,7 +627,11 @@ function registerCommands(programInstance) {
 	programInstance
 		.command('list')
 		.description('List all tasks')
-		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks.json')
+		.option(
+			'-f, --file <file>',
+			'Path to the tasks file',
+			'.taskmaster/tasks.json'
+		)
 		.option('-s, --status <status>', 'Filter by status')
 		.option('--with-subtasks', 'Show subtasks for each task')
 		.action(async (options) => {
@@ -630,7 +654,11 @@ function registerCommands(programInstance) {
 	programInstance
 		.command('expand')
 		.description('Break down tasks into detailed subtasks')
-		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks.json')
+		.option(
+			'-f, --file <file>',
+			'Path to the tasks file',
+			'.taskmaster/tasks.json'
+		)
 		.option('-i, --id <id>', 'Task ID to expand')
 		.option('-a, --all', 'Expand all tasks')
 		.option(
@@ -737,7 +765,11 @@ function registerCommands(programInstance) {
 			'Minimum complexity score to recommend expansion (1-10)',
 			'5'
 		)
-		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks.json')
+		.option(
+			'-f, --file <file>',
+			'Path to the tasks file',
+			'.taskmaster/tasks.json'
+		)
 		.option(
 			'-r, --research',
 			'Use Perplexity AI for research-backed complexity analysis'
@@ -767,7 +799,11 @@ function registerCommands(programInstance) {
 	programInstance
 		.command('clear-subtasks')
 		.description('Clear subtasks from specified tasks')
-		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks.json')
+		.option(
+			'-f, --file <file>',
+			'Path to the tasks file',
+			'.taskmaster/tasks.json'
+		)
 		.option(
 			'-i, --id <ids>',
 			'Task IDs (comma-separated) to clear subtasks from'
@@ -805,7 +841,11 @@ function registerCommands(programInstance) {
 	programInstance
 		.command('add-task')
 		.description('Add a new task using AI or manual input')
-		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks.json')
+		.option(
+			'-f, --file <file>',
+			'Path to the tasks file',
+			'.taskmaster/tasks.json'
+		)
 		.option(
 			'-p, --prompt <prompt>',
 			'Description of the task to add (required if not using manual fields)'
@@ -925,7 +965,11 @@ function registerCommands(programInstance) {
 		.description(
 			`Show the next task to work on based on dependencies and status${chalk.reset('')}`
 		)
-		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks.json')
+		.option(
+			'-f, --file <file>',
+			'Path to the tasks file',
+			'.taskmaster/tasks.json'
+		)
 		.action(async (options) => {
 			const tasksPath = options.file;
 			await displayNextTask(tasksPath);
@@ -939,7 +983,11 @@ function registerCommands(programInstance) {
 		)
 		.argument('[id]', 'Task ID to show')
 		.option('-i, --id <id>', 'Task ID to show')
-		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks.json')
+		.option(
+			'-f, --file <file>',
+			'Path to the tasks file',
+			'.taskmaster/tasks.json'
+		)
 		.action(async (taskId, options) => {
 			const idArg = taskId || options.id;
 
@@ -958,7 +1006,11 @@ function registerCommands(programInstance) {
 		.description('Add a dependency to a task')
 		.option('-i, --id <id>', 'Task ID to add dependency to')
 		.option('-d, --depends-on <id>', 'Task ID that will become a dependency')
-		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks.json')
+		.option(
+			'-f, --file <file>',
+			'Path to the tasks file',
+			'.taskmaster/tasks.json'
+		)
 		.action(async (options) => {
 			const tasksPath = options.file;
 			const taskId = options.id;
@@ -989,7 +1041,11 @@ function registerCommands(programInstance) {
 		.description('Remove a dependency from a task')
 		.option('-i, --id <id>', 'Task ID to remove dependency from')
 		.option('-d, --depends-on <id>', 'Task ID to remove as a dependency')
-		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks.json')
+		.option(
+			'-f, --file <file>',
+			'Path to the tasks file',
+			'.taskmaster/tasks.json'
+		)
 		.action(async (options) => {
 			const tasksPath = options.file;
 			const taskId = options.id;
@@ -1020,7 +1076,11 @@ function registerCommands(programInstance) {
 		.description(
 			`Identify invalid dependencies without fixing them${chalk.reset('')}`
 		)
-		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks.json')
+		.option(
+			'-f, --file <file>',
+			'Path to the tasks file',
+			'.taskmaster/tasks.json'
+		)
 		.action(async (options) => {
 			await validateDependenciesCommand(options.file);
 		});
@@ -1029,7 +1089,11 @@ function registerCommands(programInstance) {
 	programInstance
 		.command('fix-dependencies')
 		.description(`Fix invalid dependencies automatically${chalk.reset('')}`)
-		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks.json')
+		.option(
+			'-f, --file <file>',
+			'Path to the tasks file',
+			'.taskmaster/tasks.json'
+		)
 		.action(async (options) => {
 			await fixDependenciesCommand(options.file);
 		});
@@ -1051,7 +1115,11 @@ function registerCommands(programInstance) {
 	programInstance
 		.command('add-subtask')
 		.description('Add a subtask to an existing task')
-		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks.json')
+		.option(
+			'-f, --file <file>',
+			'Path to the tasks file',
+			'.taskmaster/tasks.json'
+		)
 		.option('-p, --parent <id>', 'Parent task ID (required)')
 		.option('-i, --task-id <id>', 'Existing task ID to convert to subtask')
 		.option(
@@ -1240,7 +1308,11 @@ function registerCommands(programInstance) {
 	programInstance
 		.command('remove-subtask')
 		.description('Remove a subtask from its parent task')
-		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks.json')
+		.option(
+			'-f, --file <file>',
+			'Path to the tasks file',
+			'.taskmaster/tasks.json'
+		)
 		.option(
 			'-i, --id <id>',
 			'Subtask ID(s) to remove in format "parentId.subtaskId" (can be comma-separated for multiple subtasks)'
@@ -1391,7 +1463,11 @@ function registerCommands(programInstance) {
 			'-i, --id <id>',
 			'ID(s) of the task(s) or subtask(s) to remove (e.g., "5" or "5.2" or "5,6,7")'
 		)
-		.option('-f, --file <file>', 'Path to the tasks file', '.taskmaster/tasks.json')
+		.option(
+			'-f, --file <file>',
+			'Path to the tasks file',
+			'.taskmaster/tasks.json'
+		)
 		.option('-y, --yes', 'Skip confirmation prompt', false)
 		.action(async (options) => {
 			const tasksPath = options.file;

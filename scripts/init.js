@@ -486,13 +486,13 @@ function createProjectStructure(addAliases) {
 		ensureDirectoryExists(path.join(targetDir, '.roo', `rules-${mode}`));
 	}
 
-// Create Taskmaster base directory first
-ensureDirectoryExists(path.join(targetDir, TASKMASTER_BASE_PATH));
-// Create scripts and tasks directories inside .taskmaster/
-ensureDirectoryExists(path.join(targetDir, TASKMASTER_BASE_PATH, 'scripts'));
-ensureDirectoryExists(path.join(targetDir, TASKMASTER_BASE_PATH, 'tasks'));
+	// Create Taskmaster base directory first
+	ensureDirectoryExists(path.join(targetDir, TASKMASTER_BASE_PATH));
+	// Create scripts and tasks directories inside .taskmaster/
+	ensureDirectoryExists(path.join(targetDir, TASKMASTER_BASE_PATH, 'scripts'));
+	ensureDirectoryExists(path.join(targetDir, TASKMASTER_BASE_PATH, 'tasks'));
 
-// Setup MCP configuration for integration with Cursor
+	// Setup MCP configuration for integration with Cursor
 	setupMCPConfiguration(targetDir);
 
 	// Copy template files with replacements
@@ -555,14 +555,19 @@ ensureDirectoryExists(path.join(targetDir, TASKMASTER_BASE_PATH, 'tasks'));
 
 	// Copy example_prd.txt
 	copyTemplateFile(
-	'example_prd.txt',
-	path.join(targetDir, TASKMASTER_BASE_PATH, 'scripts', 'example_prd.txt') // Place inside .taskmaster/scripts
-);
+		'example_prd.txt',
+		path.join(targetDir, TASKMASTER_BASE_PATH, 'scripts', 'example_prd.txt') // Place inside .taskmaster/scripts
+	);
 
 	// Create main README.md inside .taskmaster/scripts/
 	copyTemplateFile(
 		'README-task-master.md',
-		path.join(targetDir, TASKMASTER_BASE_PATH, 'scripts', 'README-task-master.md'), // Place inside .taskmaster/scripts
+		path.join(
+			targetDir,
+			TASKMASTER_BASE_PATH,
+			'scripts',
+			'README-task-master.md'
+		), // Place inside .taskmaster/scripts
 		replacements
 	);
 

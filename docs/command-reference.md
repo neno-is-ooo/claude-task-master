@@ -89,6 +89,16 @@ Unlike the `update-task` command which replaces task information, the `update-su
 task-master generate
 ```
 
+## Generate Jest Tests
+
+```bash
+# Generate tests for a specific task
+task-master generate-test --id=<id>
+
+# Generate tests for all tasks including subtasks
+task-master generate-test --all --with-subtasks
+```
+
 ## Set Task Status
 
 ```bash

@@ -114,6 +114,9 @@ task-master next
 
 # Generate task files
 task-master generate
+
+# Generate Jest tests for a task
+task-master generate-test --id=1
 ```
 
 ## Documentation

@@ -24,13 +24,14 @@ import {
 	clearSubtasks,
 	addTask,
 	addSubtask,
-	removeSubtask,
-	analyzeTaskComplexity,
-	updateTaskById,
-	updateSubtaskById,
-	removeTask,
-	findTaskById,
-	taskExists
+        removeSubtask,
+        analyzeTaskComplexity,
+        updateTaskById,
+        updateSubtaskById,
+        removeTask,
+        findTaskById,
+        taskExists,
+        generateTest
 } from './task-manager.js';
 
 import {
@@ -1013,20 +1014,73 @@ function registerCommands(programInstance) {
 		});
 
 	// generate command
-	programInstance
-		.command('generate')
-		.description('Generate task files from tasks.json')
-		.option('-f, --file <file>', 'Path to the tasks file', 'tasks/tasks.json')
-		.option('-o, --output <dir>', 'Output directory', 'tasks')
-		.action(async (options) => {
-			const tasksPath = options.file;
-			const outputDir = options.output;
+        programInstance
+                .command('generate')
+                .description('Generate task files from tasks.json')
+                .option('-f, --file <file>', 'Path to the tasks file', 'tasks/tasks.json')
+                .option('-o, --output <dir>', 'Output directory', 'tasks')
+                .action(async (options) => {
+                        const tasksPath = options.file;
+                        const outputDir = options.output;
 
-			console.log(chalk.blue(`Generating task files from: ${tasksPath}`));
-			console.log(chalk.blue(`Output directory: ${outputDir}`));
+                        console.log(chalk.blue(`Generating task files from: ${tasksPath}`));
+                        console.log(chalk.blue(`Output directory: ${outputDir}`));
 
-			await generateTaskFiles(tasksPath, outputDir);
-		});
+                        await generateTaskFiles(tasksPath, outputDir);
+                });
+
+        // generate-test command
+        programInstance
+                .command('generate-test')
+                .description('Generate Jest tests for tasks using AI')
+                .option('-i, --id <id>', 'Task ID to generate tests for')
+                .option('-a, --all', 'Generate tests for all tasks')
+                .option('--with-subtasks', 'Include subtasks in prompt')
+                .option('-p, --prompt <text>', 'Additional context for test generation')
+                .option('-f, --file <file>', 'Path to the tasks file', 'tasks/tasks.json')
+                .action(async (options) => {
+                        const tasksPath = options.file;
+                        const withSubtasks = options.withSubtasks || false;
+                        const extraPrompt = options.prompt || '';
+
+                        if (!options.id && !options.all) {
+                                const answers = await inquirer.prompt([
+                                        {
+                                                type: 'input',
+                                                name: 'id',
+                                                message: 'Enter task ID'
+                                        }
+                                ]);
+                                options.id = answers.id;
+                        }
+
+                        try {
+                                if (options.all) {
+                                        const data = readJSON(tasksPath);
+                                        if (!data || !data.tasks) {
+                                                throw new Error('No tasks found');
+                                        }
+                                        for (const t of data.tasks) {
+                                                await generateTest({
+                                                        tasksPath,
+                                                        id: t.id,
+                                                        includeSubtasks: withSubtasks,
+                                                        prompt: extraPrompt
+                                                });
+                                        }
+                                } else {
+                                        await generateTest({
+                                                tasksPath,
+                                                id: options.id,
+                                                includeSubtasks: withSubtasks,
+                                                prompt: extraPrompt
+                                        });
+                                }
+                        } catch (error) {
+                                console.error(chalk.red(`Error generating tests: ${error.message}`));
+                                process.exit(1);
+                        }
+                });
 
 	// set-status command
 	programInstance

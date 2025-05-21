@@ -5,3 +5,5 @@ coverage
 tasks
 package-lock.json
 tests/fixture/*.json
+claude-task-master
+tests/generated

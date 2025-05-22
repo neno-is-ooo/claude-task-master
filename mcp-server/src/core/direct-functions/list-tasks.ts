@@ -5,9 +5,10 @@
 
 import { listTasks } from '../../../../scripts/modules/task-manager.js';
 import {
-	enableSilentMode,
-	disableSilentMode
+        enableSilentMode,
+        disableSilentMode
 } from '../../../../scripts/modules/utils.js';
+import type { MCPMessage } from '../../types.js';
 
 /**
  * Direct function wrapper for listTasks with error handling and caching.
@@ -16,7 +17,7 @@ import {
  * @param {Object} log - Logger object.
  * @returns {Promise<Object>} - Task list result { success: boolean, data?: any, error?: { code: string, message: string }, fromCache: boolean }.
  */
-export async function listTasksDirect(args, log) {
+export async function listTasksDirect(args, log): Promise<MCPMessage> {
 	// Destructure the explicit tasksJsonPath from args
 	const { tasksJsonPath, reportPath, status, withSubtasks } = args;
 

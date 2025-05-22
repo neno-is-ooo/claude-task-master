@@ -9,6 +9,7 @@ import {
 	disableSilentMode
 } from '../../../../scripts/modules/utils.js';
 import { createLogWrapper } from '../../tools/utils.js';
+import type { MCPMessage } from '../../types.js';
 
 /**
  * Direct function wrapper for adding a new task with error handling.
@@ -28,7 +29,7 @@ import { createLogWrapper } from '../../tools/utils.js';
  * @param {Object} context - Additional context (session)
  * @returns {Promise<Object>} - Result object { success: boolean, data?: any, error?: { code: string, message: string } }
  */
-export async function addTaskDirect(args, log, context = {}) {
+export async function addTaskDirect(args, log, context = {}): Promise<MCPMessage> {
 	// Destructure expected args (including research and projectRoot)
 	const {
 		tasksJsonPath,

@@ -13,6 +13,7 @@ import {
 	lastFoundProjectRoot,
 	PROJECT_MARKERS
 } from '../core/utils/path-utils.js';
+import type { MCPMessage } from '../types.js';
 
 /**
  * Get normalized project root path
@@ -200,10 +201,10 @@ function getProjectRootFromSession(session, log) {
  * @returns {Object} - Standardized MCP response object
  */
 function handleApiResult(
-	result,
-	log,
-	errorPrefix = 'API error',
-	processFunction = processMCPResponseData
+        result: MCPMessage,
+        log,
+        errorPrefix = 'API error',
+        processFunction = processMCPResponseData
 ) {
 	if (!result.success) {
 		const errorMsg = result.error?.message || `Unknown ${errorPrefix}`;

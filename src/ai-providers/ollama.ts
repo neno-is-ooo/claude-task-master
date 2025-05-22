@@ -7,11 +7,25 @@ import { createOllama } from 'ollama-ai-provider';
 import { log } from '../../scripts/modules/utils.js'; // Import logging utility
 import { generateObject, generateText, streamText } from 'ai';
 
+export interface OllamaParams {
+    modelId?: string;
+    temperature?: number;
+    messages: any[];
+    maxTokens?: number;
+    baseUrl?: string;
+}
+
+export interface OllamaObjectParams extends OllamaParams {
+    schema: unknown;
+    objectName?: string;
+    maxRetries?: number;
+}
+
 // Consider making model configurable via config-manager.js later
 const DEFAULT_MODEL = 'llama3'; // Or a suitable default for Ollama
 const DEFAULT_TEMPERATURE = 0.2;
 
-function getClient(baseUrl) {
+function getClient(baseUrl?: string) {
 	// baseUrl is optional, defaults to http://localhost:11434
 	return createOllama({
 		baseUrl: baseUrl || undefined
@@ -31,12 +45,12 @@ function getClient(baseUrl) {
  * @throws {Error} If API call fails.
  */
 async function generateOllamaText({
-	modelId = DEFAULT_MODEL,
-	messages,
-	maxTokens,
-	temperature = DEFAULT_TEMPERATURE,
-	baseUrl
-}) {
+        modelId = DEFAULT_MODEL,
+        messages,
+        maxTokens,
+        temperature = DEFAULT_TEMPERATURE,
+        baseUrl
+}: OllamaParams): Promise<{ text: string; usage: { inputTokens: number; outputTokens: number } }> {
 	log('info', `Generating text with Ollama model: ${modelId}`);
 
 	try {
@@ -77,12 +91,12 @@ async function generateOllamaText({
  * @throws {Error} If API call fails.
  */
 async function streamOllamaText({
-	modelId = DEFAULT_MODEL,
-	temperature = DEFAULT_TEMPERATURE,
-	messages,
-	maxTokens,
-	baseUrl
-}) {
+        modelId = DEFAULT_MODEL,
+        temperature = DEFAULT_TEMPERATURE,
+        messages,
+        maxTokens,
+        baseUrl
+}: OllamaParams): Promise<any> {
 	log('info', `Streaming text with Ollama model: ${modelId}`);
 
 	try {
@@ -119,15 +133,15 @@ async function streamOllamaText({
  * @throws {Error} If generation or validation fails.
  */
 async function generateOllamaObject({
-	modelId = DEFAULT_MODEL,
-	temperature = DEFAULT_TEMPERATURE,
-	messages,
-	schema,
-	objectName = 'generated_object',
-	maxTokens,
-	maxRetries = 3,
-	baseUrl
-}) {
+        modelId = DEFAULT_MODEL,
+        temperature = DEFAULT_TEMPERATURE,
+        messages,
+        schema,
+        objectName = 'generated_object',
+        maxTokens,
+        maxRetries = 3,
+        baseUrl
+}: OllamaObjectParams): Promise<{ object: any; usage: { inputTokens: number; outputTokens: number } }> {
 	log('info', `Generating object with Ollama model: ${modelId}`);
 	try {
 		const ollama = getClient(baseUrl);

@@ -8,11 +8,25 @@ import { createGoogleGenerativeAI } from '@ai-sdk/google'; // Correct import for
 import { generateText, streamText, generateObject } from 'ai'; // Import from main 'ai' package
 import { log } from '../../scripts/modules/utils.js'; // Import logging utility
 
+export interface GoogleParams {
+    apiKey: string;
+    modelId?: string;
+    temperature?: number;
+    messages: any[];
+    maxTokens?: number;
+    baseUrl?: string;
+}
+
+export interface GoogleObjectParams extends GoogleParams {
+    schema: unknown;
+    objectName: string;
+}
+
 // Consider making model configurable via config-manager.js later
 const DEFAULT_MODEL = 'gemini-2.5-pro-exp-03-25'; // Or a suitable default
 const DEFAULT_TEMPERATURE = 0.2; // Or a suitable default
 
-function getClient(apiKey, baseUrl) {
+function getClient(apiKey: string, baseUrl?: string) {
 	if (!apiKey) {
 		throw new Error('Google API key is required.');
 	}
@@ -35,13 +49,13 @@ function getClient(apiKey, baseUrl) {
  * @throws {Error} If API key is missing or API call fails.
  */
 async function generateGoogleText({
-	apiKey,
-	modelId = DEFAULT_MODEL,
-	temperature = DEFAULT_TEMPERATURE,
-	messages,
-	maxTokens,
-	baseUrl
-}) {
+        apiKey,
+        modelId = DEFAULT_MODEL,
+        temperature = DEFAULT_TEMPERATURE,
+        messages,
+        maxTokens,
+        baseUrl
+}: GoogleParams): Promise<{ text: string; usage: { inputTokens: number; outputTokens: number } }> {
 	if (!apiKey) {
 		throw new Error('Google API key is required.');
 	}
@@ -89,13 +103,13 @@ async function generateGoogleText({
  * @throws {Error} If API key is missing or API call fails.
  */
 async function streamGoogleText({
-	apiKey,
-	modelId = DEFAULT_MODEL,
-	temperature = DEFAULT_TEMPERATURE,
-	messages,
-	maxTokens,
-	baseUrl
-}) {
+        apiKey,
+        modelId = DEFAULT_MODEL,
+        temperature = DEFAULT_TEMPERATURE,
+        messages,
+        maxTokens,
+        baseUrl
+}: GoogleParams): Promise<any> {
 	if (!apiKey) {
 		throw new Error('Google API key is required.');
 	}
@@ -135,15 +149,15 @@ async function streamGoogleText({
  * @throws {Error} If API key is missing or API call fails.
  */
 async function generateGoogleObject({
-	apiKey,
-	modelId = DEFAULT_MODEL,
-	temperature = DEFAULT_TEMPERATURE,
-	messages,
-	schema,
-	objectName, // Note: Vercel SDK might use this differently or not at all
-	maxTokens,
-	baseUrl
-}) {
+        apiKey,
+        modelId = DEFAULT_MODEL,
+        temperature = DEFAULT_TEMPERATURE,
+        messages,
+        schema,
+        objectName,
+        maxTokens,
+        baseUrl
+}: GoogleObjectParams): Promise<{ object: any; usage: { inputTokens: number; outputTokens: number } }> {
 	if (!apiKey) {
 		throw new Error('Google API key is required.');
 	}

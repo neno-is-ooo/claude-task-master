@@ -2,7 +2,21 @@ import { createOpenAI } from '@ai-sdk/openai'; // Using openai provider from Ver
 import { generateObject, generateText } from 'ai'; // Import necessary functions from 'ai'
 import { log } from '../../scripts/modules/utils.js';
 
-function getClient(apiKey, baseUrl) {
+export interface OpenAIParams {
+    apiKey: string;
+    modelId: string;
+    messages: any[];
+    maxTokens?: number;
+    temperature?: number;
+    baseUrl?: string;
+}
+
+export interface OpenAIObjectParams extends OpenAIParams {
+    schema: unknown;
+    objectName: string;
+}
+
+function getClient(apiKey: string, baseUrl?: string) {
 	if (!apiKey) {
 		throw new Error('OpenAI API key is required.');
 	}
@@ -19,8 +33,8 @@ function getClient(apiKey, baseUrl) {
  * @returns {Promise<object>} The generated text content and usage.
  * @throws {Error} If API call fails.
  */
-export async function generateOpenAIText(params) {
-	const { apiKey, modelId, messages, maxTokens, temperature, baseUrl } = params;
+export async function generateOpenAIText(params: OpenAIParams): Promise<{ text: string; usage: { inputTokens: number; outputTokens: number } }> {
+        const { apiKey, modelId, messages, maxTokens, temperature, baseUrl } = params;
 	log('debug', `generateOpenAIText called with model: ${modelId}`);
 
 	if (!apiKey) {
@@ -81,8 +95,8 @@ export async function generateOpenAIText(params) {
  * @returns {Promise<ReadableStream>} A readable stream of text deltas.
  * @throws {Error} If API call fails.
  */
-export async function streamOpenAIText(params) {
-	const { apiKey, modelId, messages, maxTokens, temperature, baseUrl } = params;
+export async function streamOpenAIText(params: OpenAIParams): Promise<any> {
+        const { apiKey, modelId, messages, maxTokens, temperature, baseUrl } = params;
 	log('debug', `streamOpenAIText called with model: ${modelId}`);
 
 	if (!apiKey) {
@@ -130,7 +144,7 @@ export async function streamOpenAIText(params) {
  * @returns {Promise<object>} The generated object matching the schema and usage.
  * @throws {Error} If API call fails or object generation fails.
  */
-export async function generateOpenAIObject(params) {
+export async function generateOpenAIObject(params: OpenAIObjectParams): Promise<{ object: any; usage: { inputTokens: number; outputTokens: number } }> {
 	const {
 		apiKey,
 		modelId,

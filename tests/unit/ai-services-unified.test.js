@@ -52,7 +52,7 @@ jest.unstable_mockModule('../../scripts/modules/config-manager.js', () => ({
 const mockGenerateAnthropicText = jest.fn();
 const mockStreamAnthropicText = jest.fn();
 const mockGenerateAnthropicObject = jest.fn();
-jest.unstable_mockModule('../../src/ai-providers/anthropic.js', () => ({
+jest.unstable_mockModule('../../src/ai-providers/anthropic.ts', () => ({
 	generateAnthropicText: mockGenerateAnthropicText,
 	streamAnthropicText: mockStreamAnthropicText,
 	generateAnthropicObject: mockGenerateAnthropicObject
@@ -61,7 +61,7 @@ jest.unstable_mockModule('../../src/ai-providers/anthropic.js', () => ({
 const mockGeneratePerplexityText = jest.fn();
 const mockStreamPerplexityText = jest.fn();
 const mockGeneratePerplexityObject = jest.fn();
-jest.unstable_mockModule('../../src/ai-providers/perplexity.js', () => ({
+jest.unstable_mockModule('../../src/ai-providers/perplexity.ts', () => ({
 	generatePerplexityText: mockGeneratePerplexityText,
 	streamPerplexityText: mockStreamPerplexityText,
 	generatePerplexityObject: mockGeneratePerplexityObject

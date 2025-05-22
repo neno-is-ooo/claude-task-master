@@ -8,6 +8,21 @@ import { createAnthropic } from '@ai-sdk/anthropic';
 import { generateText, streamText, generateObject } from 'ai';
 import { log } from '../../scripts/modules/utils.js'; // Assuming utils is accessible
 
+export interface AnthropicParams {
+    apiKey: string;
+    modelId: string;
+    messages: any[];
+    maxTokens?: number;
+    temperature?: number;
+    baseUrl?: string;
+}
+
+export interface AnthropicObjectParams extends AnthropicParams {
+    schema: unknown;
+    objectName?: string;
+    maxRetries?: number;
+}
+
 // TODO: Implement standardized functions for generateText, streamText, generateObject
 
 // --- Client Instantiation ---
@@ -17,7 +32,7 @@ import { log } from '../../scripts/modules/utils.js'; // Assuming utils is acces
 // Remove the global variable and caching logic
 // let anthropicClient;
 
-function getClient(apiKey, baseUrl) {
+function getClient(apiKey: string, baseUrl?: string) {
 	if (!apiKey) {
 		// In a real scenario, this would use the config resolver.
 		// Throwing error here if key isn't passed for simplicity.
@@ -54,13 +69,13 @@ function getClient(apiKey, baseUrl) {
  * @throws {Error} If the API call fails.
  */
 export async function generateAnthropicText({
-	apiKey,
-	modelId,
-	messages,
-	maxTokens,
-	temperature,
-	baseUrl
-}) {
+        apiKey,
+        modelId,
+        messages,
+        maxTokens,
+        temperature,
+        baseUrl
+}: AnthropicParams): Promise<{ text: string; usage: { inputTokens: number; outputTokens: number } }> {
 	log('debug', `Generating Anthropic text with model: ${modelId}`);
 	try {
 		const client = getClient(apiKey, baseUrl);
@@ -105,13 +120,13 @@ export async function generateAnthropicText({
  * @throws {Error} If the API call fails to initiate the stream.
  */
 export async function streamAnthropicText({
-	apiKey,
-	modelId,
-	messages,
-	maxTokens,
-	temperature,
-	baseUrl
-}) {
+        apiKey,
+        modelId,
+        messages,
+        maxTokens,
+        temperature,
+        baseUrl
+}: AnthropicParams): Promise<any> {
 	log('debug', `Streaming Anthropic text with model: ${modelId}`);
 	try {
 		const client = getClient(apiKey, baseUrl);
@@ -167,16 +182,16 @@ export async function streamAnthropicText({
  * @throws {Error} If generation or validation fails.
  */
 export async function generateAnthropicObject({
-	apiKey,
-	modelId,
-	messages,
-	schema,
-	objectName = 'generated_object',
-	maxTokens,
-	temperature,
-	maxRetries = 3,
-	baseUrl
-}) {
+        apiKey,
+        modelId,
+        messages,
+        schema,
+        objectName = 'generated_object',
+        maxTokens,
+        temperature,
+        maxRetries = 3,
+        baseUrl
+}: AnthropicObjectParams): Promise<{ object: any; usage: { inputTokens: number; outputTokens: number } }> {
 	log(
 		'debug',
 		`Generating Anthropic object ('${objectName}') with model: ${modelId}`

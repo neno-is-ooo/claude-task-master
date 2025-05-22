@@ -75,10 +75,10 @@ import {
 } from './task-manager/models.js';
 import { findProjectRoot } from './utils.js';
 import {
-	isValidTaskStatus,
-	TASK_STATUS_OPTIONS
-} from '../../src/constants/task-status.js';
-import { getTaskMasterVersion } from '../../src/utils/getVersion.js';
+        isValidTaskStatus,
+        TASK_STATUS_OPTIONS
+} from '../../src/constants/task-status.ts';
+import { getTaskMasterVersion } from '../../src/utils/getVersion.ts';
 /**
  * Runs the interactive setup process for model configuration.
  * @param {string|null} projectRoot - The resolved project root directory.

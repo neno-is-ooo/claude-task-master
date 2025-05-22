@@ -23,8 +23,8 @@ import {
 	readComplexityReport
 } from './task-manager.js';
 import { getProjectName, getDefaultSubtasks } from './config-manager.js';
-import { TASK_STATUS_OPTIONS } from '../../src/constants/task-status.js';
-import { getTaskMasterVersion } from '../../src/utils/getVersion.js';
+import { TASK_STATUS_OPTIONS } from '../../src/constants/task-status.ts';
+import { getTaskMasterVersion } from '../../src/utils/getVersion.ts';
 
 // Create a color gradient for the banner
 const coolGradient = gradient(['#00b4d8', '#0077b6', '#03045e']);

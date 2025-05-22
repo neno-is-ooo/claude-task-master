@@ -2,7 +2,23 @@ import { createOpenRouter } from '@openrouter/ai-sdk-provider';
 import { generateText, streamText, generateObject } from 'ai';
 import { log } from '../../scripts/modules/utils.js'; // Assuming utils.js is in scripts/modules
 
-function getClient(apiKey, baseUrl) {
+export interface OpenRouterParams {
+    apiKey: string;
+    modelId: string;
+    messages: any[];
+    maxTokens?: number;
+    temperature?: number;
+    baseUrl?: string;
+    [key: string]: any;
+}
+
+export interface OpenRouterObjectParams extends OpenRouterParams {
+    schema: unknown;
+    objectName?: string;
+    maxRetries?: number;
+}
+
+function getClient(apiKey: string, baseUrl?: string) {
 	if (!apiKey) throw new Error('OpenRouter API key is required.');
 	return createOpenRouter({
 		apiKey,
@@ -24,14 +40,14 @@ function getClient(apiKey, baseUrl) {
  * @throws {Error} If the API call fails.
  */
 async function generateOpenRouterText({
-	apiKey,
-	modelId,
-	messages,
-	maxTokens,
-	temperature,
-	baseUrl,
-	...rest // Capture any other Vercel AI SDK compatible parameters
-}) {
+        apiKey,
+        modelId,
+        messages,
+        maxTokens,
+        temperature,
+        baseUrl,
+        ...rest // Capture any other Vercel AI SDK compatible parameters
+}: OpenRouterParams): Promise<{ text: string; usage: { inputTokens: number; outputTokens: number } }> {
 	if (!apiKey) throw new Error('OpenRouter API key is required.');
 	if (!modelId) throw new Error('OpenRouter model ID is required.');
 	if (!messages || messages.length === 0)
@@ -106,14 +122,14 @@ async function generateOpenRouterText({
  * @throws {Error} If the API call fails.
  */
 async function streamOpenRouterText({
-	apiKey,
-	modelId,
-	messages,
-	maxTokens,
-	temperature,
-	baseUrl,
-	...rest
-}) {
+        apiKey,
+        modelId,
+        messages,
+        maxTokens,
+        temperature,
+        baseUrl,
+        ...rest
+}: OpenRouterParams): Promise<any> {
 	if (!apiKey) throw new Error('OpenRouter API key is required.');
 	if (!modelId) throw new Error('OpenRouter model ID is required.');
 	if (!messages || messages.length === 0)
@@ -162,17 +178,17 @@ async function streamOpenRouterText({
  * @throws {Error} If the API call fails or validation fails.
  */
 async function generateOpenRouterObject({
-	apiKey,
-	modelId,
-	schema,
-	messages,
-	objectName = 'generated_object',
-	maxRetries = 3,
-	maxTokens,
-	temperature,
-	baseUrl,
-	...rest
-}) {
+        apiKey,
+        modelId,
+        schema,
+        messages,
+        objectName = 'generated_object',
+        maxRetries = 3,
+        maxTokens,
+        temperature,
+        baseUrl,
+        ...rest
+}: OpenRouterObjectParams): Promise<{ object: any; usage: { inputTokens: number; outputTokens: number } }> {
 	if (!apiKey) throw new Error('OpenRouter API key is required.');
 	if (!modelId) throw new Error('OpenRouter model ID is required.');
 	if (!schema) throw new Error('Zod schema is required for object generation.');

@@ -9,9 +9,9 @@ import { getDebugFlag } from '../config-manager.js';
 import updateSingleTaskStatus from './update-single-task-status.js';
 import generateTaskFiles from './generate-task-files.js';
 import {
-	isValidTaskStatus,
-	TASK_STATUS_OPTIONS
-} from '../../../src/constants/task-status.js';
+        isValidTaskStatus,
+        TASK_STATUS_OPTIONS
+} from '../../../src/constants/task-status.ts';
 
 /**
  * Set the status of a task

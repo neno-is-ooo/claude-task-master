@@ -22,13 +22,13 @@ import {
 } from './config-manager.js';
 import { log, resolveEnvVariable, isSilentMode } from './utils.js';
 
-import * as anthropic from '../../src/ai-providers/anthropic.js';
-import * as perplexity from '../../src/ai-providers/perplexity.js';
-import * as google from '../../src/ai-providers/google.js';
-import * as openai from '../../src/ai-providers/openai.js';
-import * as xai from '../../src/ai-providers/xai.js';
-import * as openrouter from '../../src/ai-providers/openrouter.js';
-import * as ollama from '../../src/ai-providers/ollama.js';
+import * as anthropic from '../../src/ai-providers/anthropic.ts';
+import * as perplexity from '../../src/ai-providers/perplexity.ts';
+import * as google from '../../src/ai-providers/google.ts';
+import * as openai from '../../src/ai-providers/openai.ts';
+import * as xai from '../../src/ai-providers/xai.ts';
+import * as openrouter from '../../src/ai-providers/openrouter.ts';
+import * as ollama from '../../src/ai-providers/ollama.ts';
 // TODO: Import other provider modules when implemented (ollama, etc.)
 
 // Helper function to get cost for a specific model

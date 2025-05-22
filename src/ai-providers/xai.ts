@@ -8,8 +8,23 @@ import { createXai } from '@ai-sdk/xai';
 import { generateText, streamText, generateObject } from 'ai'; // Only import what's used
 import { log } from '../../scripts/modules/utils.js'; // Assuming utils is accessible
 
+export interface XaiParams {
+    apiKey: string;
+    modelId: string;
+    messages: any[];
+    maxTokens?: number;
+    temperature?: number;
+    baseUrl?: string;
+}
+
+export interface XaiObjectParams extends XaiParams {
+    schema: unknown;
+    objectName?: string;
+    maxRetries?: number;
+}
+
 // --- Client Instantiation ---
-function getClient(apiKey, baseUrl) {
+function getClient(apiKey: string, baseUrl?: string) {
 	if (!apiKey) {
 		throw new Error('xAI API key is required.');
 	}
@@ -35,13 +50,13 @@ function getClient(apiKey, baseUrl) {
  * @throws {Error} If the API call fails.
  */
 export async function generateXaiText({
-	apiKey,
-	modelId,
-	messages,
-	maxTokens,
-	temperature,
-	baseUrl
-}) {
+        apiKey,
+        modelId,
+        messages,
+        maxTokens,
+        temperature,
+        baseUrl
+}: XaiParams): Promise<{ text: string; usage: { inputTokens: number; outputTokens: number } }> {
 	log('debug', `Generating xAI text with model: ${modelId}`);
 	try {
 		const client = getClient(apiKey, baseUrl);
@@ -83,13 +98,13 @@ export async function generateXaiText({
  * @throws {Error} If the API call fails to initiate the stream.
  */
 export async function streamXaiText({
-	apiKey,
-	modelId,
-	messages,
-	maxTokens,
-	temperature,
-	baseUrl
-}) {
+        apiKey,
+        modelId,
+        messages,
+        maxTokens,
+        temperature,
+        baseUrl
+}: XaiParams): Promise<any> {
 	log('debug', `Streaming xAI text with model: ${modelId}`);
 	try {
 		const client = getClient(apiKey, baseUrl);
@@ -125,16 +140,16 @@ export async function streamXaiText({
  * @throws {Error} If generation or validation fails.
  */
 export async function generateXaiObject({
-	apiKey,
-	modelId,
-	messages,
-	schema,
-	objectName = 'generated_xai_object',
-	maxTokens,
-	temperature,
-	maxRetries = 3,
-	baseUrl
-}) {
+        apiKey,
+        modelId,
+        messages,
+        schema,
+        objectName = 'generated_xai_object',
+        maxTokens,
+        temperature,
+        maxRetries = 3,
+        baseUrl
+}: XaiObjectParams): Promise<{ object: any; usage: { inputTokens: number; outputTokens: number } }> {
 	log(
 		'warn',
 		`Attempting to generate xAI object ('${objectName}') with model: ${modelId}. This may not be supported by the provider.`

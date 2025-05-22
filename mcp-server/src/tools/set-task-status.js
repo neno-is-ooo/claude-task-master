@@ -11,7 +11,7 @@ import {
 } from './utils.js';
 import { setTaskStatusDirect } from '../core/task-master-core.js';
 import { findTasksJsonPath } from '../core/utils/path-utils.js';
-import { TASK_STATUS_OPTIONS } from '../../../src/constants/task-status.js';
+import { TASK_STATUS_OPTIONS } from '../../../src/constants/task-status.ts';
 
 /**
  * Register the setTaskStatus tool with the MCP server

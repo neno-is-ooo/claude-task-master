@@ -73,6 +73,10 @@ jobs:
         with:
           path: node_modules
           key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Build
+        run: npm run build
 
       - name: Run Tests
         run: |

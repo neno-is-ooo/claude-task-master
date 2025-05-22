@@ -32,6 +32,9 @@ jobs:
         run: npm ci
         timeout-minutes: 2
 
+      - name: Build
+        run: npm run build
+
       - name: Enter RC mode
         run: |
           npx changeset pre exit || true

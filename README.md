@@ -115,7 +115,9 @@ task-master next
 # Generate task files
 task-master generate
 ```
+### Building from Source
 
+Run `npm run typecheck` to check TypeScript types without emitting files. Compile the project with `npm run build` which outputs JavaScript to the `dist/` directory. Tests and release workflows compile the code before running.
 ## Documentation
 
 For more detailed information, check out the documentation in the `docs` directory:

@@ -10,10 +10,11 @@
 		"task-master-ai": "mcp-server/server.js"
 	},
 	"scripts": {
-		"test": "node --experimental-vm-modules node_modules/.bin/jest",
-		"test:fails": "node --experimental-vm-modules node_modules/.bin/jest --onlyFailures",
-		"test:watch": "node --experimental-vm-modules node_modules/.bin/jest --watch",
-		"test:coverage": "node --experimental-vm-modules node_modules/.bin/jest --coverage",
+                "build": "tsup",
+                "test": "npm run build && node --experimental-vm-modules node_modules/.bin/jest",
+                "test:fails": "npm run build && node --experimental-vm-modules node_modules/.bin/jest --onlyFailures",
+                "test:watch": "npm run build && node --experimental-vm-modules node_modules/.bin/jest --watch",
+                "test:coverage": "npm run build && node --experimental-vm-modules node_modules/.bin/jest --coverage",
 		"test:e2e": "./tests/e2e/run_e2e.sh",
 		"test:e2e-report": "./tests/e2e/run_e2e.sh --analyze-log",
 		"prepare": "chmod +x bin/task-master.js mcp-server/server.js",
@@ -102,12 +103,15 @@
 		"execa": "^8.0.1",
 		"ink": "^5.0.1",
 		"jest": "^29.7.0",
-		"jest-environment-node": "^29.7.0",
-		"mock-fs": "^5.5.0",
-		"node-fetch": "^3.3.2",
-		"prettier": "^3.5.3",
-		"react": "^18.3.1",
-		"supertest": "^7.1.0",
-		"tsx": "^4.16.2"
-	}
+                "jest-environment-node": "^29.7.0",
+                "mock-fs": "^5.5.0",
+                "node-fetch": "^3.3.2",
+                "prettier": "^3.5.3",
+                "react": "^18.3.1",
+                "supertest": "^7.1.0",
+                "tsx": "^4.16.2",
+                "ts-jest": "^29.1.1",
+                "tsup": "^8.5.0",
+                "typescript": "^5.8.3"
+        }
 }

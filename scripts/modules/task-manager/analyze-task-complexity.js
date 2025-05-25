@@ -16,27 +16,138 @@ import { generateTextService } from '../ai-services-unified.js';
 import { getDebugFlag, getProjectName } from '../config-manager.js';
 
 /**
- * Generates the prompt for complexity analysis.
- * (Moved from ai-services.js and simplified)
+ * Generates an advanced complexity analysis prompt using chain-of-thought reasoning
+ * and structured complexity criteria for improved task assessment quality.
  * @param {Object} tasksData - The tasks data object.
- * @returns {string} The generated prompt.
+ * @returns {string} The generated prompt with advanced reasoning framework.
  */
 function generateInternalComplexityAnalysisPrompt(tasksData) {
 	const tasksString = JSON.stringify(tasksData.tasks, null, 2);
-	return `Analyze the following tasks to determine their complexity (1-10 scale) and recommend the number of subtasks for expansion. Provide a brief reasoning and an initial expansion prompt for each.
+	
+	const complexityCriteria = `
+## Complexity Assessment Framework
+
+Evaluate each task across these five dimensions (1-10 scale each):
+
+**1. Technical Complexity (25% weight)**
+- Algorithm sophistication and implementation challenges
+- Architecture design requirements
+- Performance and scalability considerations
+- Integration with existing systems
+
+**2. Integration Complexity (20% weight)** 
+- External API dependencies and interactions
+- Cross-system compatibility requirements
+- Data format transformations needed
+- Third-party service integrations
+
+**3. Domain Complexity (20% weight)**
+- Specialized business logic requirements
+- Domain-specific knowledge needed
+- Compliance and regulatory considerations
+- User experience complexity
+
+**4. Risk Complexity (20% weight)**
+- Uncertainty in requirements or approach
+- Potential for significant rework
+- Dependencies on external factors
+- Impact of failure on system
+
+**5. Maintenance Complexity (15% weight)**
+- Long-term maintenance implications
+- Documentation and knowledge transfer needs
+- Future extensibility requirements
+- Testing and debugging complexity`;
+
+	const reasoningFramework = `
+## Analysis Process
+
+For each task, follow this structured reasoning:
+
+1. **Initial Assessment**: Read the task thoroughly and identify key requirements
+2. **Architectural Thinking**: There are three types of simplification: **appropriate simplification** that eliminates unnecessary architectural constructs while preserving implementation power; **oversimplification** that reduces architectural details below the level needed for adequate implementation; and **false complexity** that maintains theoretical architectural apparatus obscuring rather than illuminating implementation. Avoid the last two in every thinking process you carry. Only use appropriate simplification when needed. Develop frameworks keeping the work elegant, grounded in best test-driven practices while avoiding unnecessary architectural baggage.
+3. **Dimension Analysis**: Score each of the 5 complexity dimensions (1-10)
+4. **Weighted Calculation**: Apply weights to get overall complexity score
+5. **Subtask Estimation**: Based on complexity, recommend appropriate subtask count:
+   - Score 1-3: 2-3 subtasks (simple implementation)
+   - Score 4-6: 3-5 subtasks (moderate complexity)
+   - Score 7-8: 5-7 subtasks (high complexity)
+   - Score 9-10: 7-10 subtasks (very high complexity)
+6. **Expansion Strategy**: Generate specific, actionable expansion prompt
+
+## Examples
+
+**Low Complexity Example (Score: 3)**
+Task: "Add a simple validation to user input form"
+- Technical: 2 (basic validation logic)
+- Integration: 1 (no external dependencies)
+- Domain: 3 (standard form validation)
+- Risk: 2 (well-understood requirements)
+- Maintenance: 3 (minimal ongoing complexity)
+Weighted Score: (2×0.25 + 1×0.20 + 3×0.20 + 2×0.20 + 3×0.15) = 2.25 ≈ 3
+Subtasks: 2-3
+Strategy: Focus on validation rules, error handling, UI feedback
+
+**High Complexity Example (Score: 8)**
+Task: "Implement real-time collaborative editing with conflict resolution"
+- Technical: 9 (complex algorithms, real-time sync)
+- Integration: 8 (WebSocket, database, caching)
+- Domain: 7 (collaborative editing patterns)
+- Risk: 9 (many unknowns, complex testing)
+- Maintenance: 8 (ongoing complexity, edge cases)
+Weighted Score: (9×0.25 + 8×0.20 + 7×0.20 + 9×0.20 + 8×0.15) = 8.25 ≈ 8
+Subtasks: 6-8
+Strategy: Break into conflict detection, resolution algorithms, real-time sync, testing`;
+
+	const fewShotExamples = `
+## Few-Shot Learning Examples
+
+**Example 1:**
+{
+  "taskId": 1,
+  "taskTitle": "Create user authentication system",
+  "complexityScore": 6,
+  "recommendedSubtasks": 4,
+  "reasoning": "Technical (7): JWT implementation, password hashing, session management. Integration (6): Database integration, API endpoints. Domain (5): Standard auth patterns. Risk (6): Security considerations. Maintenance (5): Ongoing security updates. Weighted: 6.0",
+  "expansionPrompt": "Break down authentication into: 1) User registration with validation, 2) Login/logout functionality, 3) JWT token management, 4) Password reset flow. Focus on security best practices and error handling."
+}
+
+**Example 2:**
+{
+  "taskId": 2,
+  "taskTitle": "Update button color to blue",
+  "complexityScore": 2,
+  "recommendedSubtasks": 2,
+  "reasoning": "Technical (1): Simple CSS change. Integration (1): No dependencies. Domain (2): Basic UI update. Risk (1): Low risk change. Maintenance (2): Minimal impact. Weighted: 1.4 ≈ 2",
+  "expansionPrompt": "Split into: 1) Update CSS styles for button component, 2) Test visual changes across different screen sizes and browsers."
+}`;
+
+	return `You are an AI assistant specialized in comprehensive complexity analysis for software development tasks using a multi-dimensional framework.
+
+${complexityCriteria}
+
+${reasoningFramework}
+
+${fewShotExamples}
+
+## Your Task
+
+Analyze the following tasks and provide detailed complexity assessment:
 
 Tasks:
 ${tasksString}
 
-Respond ONLY with a valid JSON array matching the schema:
+**Response Format:**
+Respond ONLY with a valid JSON array. Each task analysis must include your step-by-step reasoning for the complexity score and clear expansion strategy.
+
 [
   {
     "taskId": <number>,
     "taskTitle": "<string>",
     "complexityScore": <number 1-10>,
     "recommendedSubtasks": <number>,
-    "expansionPrompt": "<string>",
-    "reasoning": "<string>"
+    "reasoning": "<string: Show dimension scores and weighted calculation>",
+    "expansionPrompt": "<string: Specific, actionable breakdown strategy>"
   },
   ...
 ]

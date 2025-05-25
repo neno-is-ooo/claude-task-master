@@ -1,0 +1,48 @@
+# URL Shortener Application
+
+## Overview
+Build a modern URL shortener application with a clean React frontend and Node.js/Express backend.
+
+## Technical Requirements
+
+### Frontend (React + Vite)
+- Modern React application using Vite for development
+- Clean, responsive UI with form validation
+- Real-time feedback for URL shortening operations
+- Support for copying shortened URLs to clipboard
+- Basic error handling and loading states
+
+### Backend (Node.js + Express)
+- RESTful API with Express.js
+- In-memory storage for URL mappings
+- Short code generation with collision handling
+- CORS support for frontend integration
+- Input validation and sanitization
+
+### Core Features
+1. **URL Shortening**: Accept long URLs and return short codes
+2. **URL Redirection**: Redirect short codes to original URLs
+3. **Validation**: Ensure URLs are valid before shortening
+4. **UI Components**: Form inputs, buttons, results display
+5. **Error Handling**: Clear error messages for invalid inputs
+
+## API Endpoints
+
+### POST /api/shorten
+- Accept long URL in request body
+- Validate URL format
+- Generate unique short code
+- Store mapping in memory
+- Return shortened URL
+
+### GET /:shortCode
+- Accept short code as URL parameter
+- Look up original URL from storage
+- Redirect to original URL or return 404
+
+## Implementation Notes
+- Use a simple algorithm for short code generation
+- Implement basic collision detection and retry logic
+- Focus on clean, maintainable code structure
+- Add basic styling for professional appearance
+- Ensure responsive design for mobile devices

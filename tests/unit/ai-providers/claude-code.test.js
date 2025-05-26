@@ -27,8 +27,11 @@ jest.unstable_mockModule('child_process', () => ({
 
 // Import after mocking
 const claudeCode = await import('../../../src/ai-providers/claude-code.js');
-const { generateClaudeCodeText, generateClaudeCodeObject, streamClaudeCodeText } =
-	claudeCode;
+const {
+	generateClaudeCodeText,
+	generateClaudeCodeObject,
+	streamClaudeCodeText
+} = claudeCode;
 
 describe('Claude Code Provider', () => {
 	let mockChildProcess;

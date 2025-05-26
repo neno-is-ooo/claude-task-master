@@ -5,20 +5,8 @@
  * This provider uses the local Claude Code CLI instead of direct API calls,
  * allowing users to leverage their flat subscription.
  */
-import { exec } from 'child_process';
-import { promisify } from 'util';
+import { spawn } from 'child_process';
 import { log } from '../../scripts/modules/utils.js';
-
-const execAsync = promisify(exec);
-
-/**
- * Escapes double quotes in a string for shell command usage
- * @param {string} str - The string to escape
- * @returns {string} The escaped string
- */
-function escapeForShell(str) {
-	return str.replace(/"/g, '\\"').replace(/\$/g, '\\$');
-}
 
 /**
  * Formats messages array into a single prompt for Claude Code CLI
@@ -47,6 +35,46 @@ function formatMessagesForCLI(messages) {
 }
 
 /**
+ * Executes Claude Code CLI with proper stdin handling
+ * @param {string} command - The command to execute
+ * @param {string} input - The input to pass via stdin
+ * @returns {Promise<{stdout: string, stderr: string}>}
+ */
+function executeClaudeCommand(command, input) {
+	return new Promise((resolve, reject) => {
+		const args = command.split(' ').slice(1); // Remove 'claude' from command
+		const child = spawn('claude', args);
+		
+		let stdout = '';
+		let stderr = '';
+		
+		child.stdout.on('data', (data) => {
+			stdout += data.toString();
+		});
+		
+		child.stderr.on('data', (data) => {
+			stderr += data.toString();
+		});
+		
+		child.on('error', (error) => {
+			reject(error);
+		});
+		
+		child.on('close', (code) => {
+			if (code !== 0) {
+				reject(new Error(`Claude Code CLI exited with code ${code}: ${stderr}`));
+			} else {
+				resolve({ stdout, stderr });
+			}
+		});
+		
+		// Write input to stdin
+		child.stdin.write(input);
+		child.stdin.end();
+	});
+}
+
+/**
  * Generates text using Claude Code CLI.
  *
  * @param {object} params - Parameters for the text generation.
@@ -72,13 +100,12 @@ export async function generateClaudeCodeText({
 	try {
 		// Format messages into a single prompt
 		const prompt = formatMessagesForCLI(messages);
-		const escapedPrompt = escapeForShell(prompt);
 		
 		// Build the command with model selection if applicable
 		let command = `claude --print --output-format json`;
 		
 		// Map common model IDs to Claude Code CLI model aliases
-		if (modelId) {
+		if (modelId && modelId !== 'default') {
 			const modelMap = {
 				'claude-3-opus-20240229': 'opus',
 				'claude-3-5-sonnet-20241022': 'sonnet',
@@ -91,14 +118,10 @@ export async function generateClaudeCodeText({
 			command += ` --model ${modelAlias}`;
 		}
 		
-		command += ` "${escapedPrompt}"`;
+		log('debug', `Executing Claude Code CLI with prompt length: ${prompt.length} chars`);
 		
-		log('debug', `Executing Claude Code CLI command`);
-		
-		// Execute the command
-		const { stdout, stderr } = await execAsync(command, {
-			maxBuffer: 10 * 1024 * 1024 // 10MB buffer for large responses
-		});
+		// Execute the command using stdin to avoid shell escaping issues
+		const { stdout, stderr } = await executeClaudeCommand(command, prompt);
 		
 		if (stderr) {
 			log('warn', `Claude Code CLI stderr: ${stderr}`);

@@ -58,6 +58,8 @@
 | openrouter | mistralai/mistral-small-3.1-24b-instruct:free | —         | 0          | 0           |
 | openrouter | mistralai/mistral-small-3.1-24b-instruct      | —         | 0.1        | 0.3         |
 | openrouter | thudm/glm-4-32b:free                          | —         | 0          | 0           |
+| openai-codex | default                                     | 0.7       | Subscription | Subscription |
+| claude-code | default                                      | 0.727     | Subscription | Subscription |
 
 ## Research Models
 
@@ -75,6 +77,8 @@
 
 | Provider   | Model Name                                    | SWE Score | Input Cost | Output Cost |
 | ---------- | --------------------------------------------- | --------- | ---------- | ----------- |
+| openai-codex | default                                     | 0.7       | Subscription | Subscription |
+| claude-code | default                                      | 0.727     | Subscription | Subscription |
 | anthropic  | claude-3-7-sonnet-20250219                    | 0.623     | 3          | 15          |
 | anthropic  | claude-3-5-sonnet-20241022                    | 0.49      | 3          | 15          |
 | openai     | gpt-4o                                        | 0.332     | 2.5        | 10          |
@@ -118,3 +122,32 @@
 | openrouter | mistralai/mistral-small-3.1-24b-instruct:free | —         | 0          | 0           |
 | openrouter | mistralai/mistral-small-3.1-24b-instruct      | —         | 0.1        | 0.3         |
 | openrouter | thudm/glm-4-32b:free                          | —         | 0          | 0           |
+
+---
+
+## Provider Specific Notes
+
+### OpenAI Codex CLI (Provider ID: `openai-codex`)
+
+*   **Model ID in Taskmaster:** `default` (This is the only model ID available for this provider)
+*   **Name in Selection:** "OpenAI Codex CLI (Subscription)"
+*   **Description:** Uses your local OpenAI Codex CLI installation for all API calls. This model relies on your existing OpenAI Codex subscription.
+*   **Cost:** Pricing is based on your OpenAI Codex subscription (flat rate). Taskmaster does not track per-token costs for this provider. The input/output costs in the table above will show "Subscription" or similar to reflect this.
+*   **Prerequisites:**
+    *   OpenAI Codex CLI must be installed on your system.
+    *   You must be logged in to the OpenAI Codex CLI (`openai-codex login`).
+    *   The `openai-codex` command must be available in your system's PATH.
+*   **Usage:** When `openai-codex` is selected as a provider for a role (e.g., `main` or `fallback`) in Taskmaster, it will invoke the local `openai-codex` command. Ensure your CLI is configured correctly to interact with your desired Codex model.
+
+### Claude Code CLI (Provider ID: `claude-code`)
+
+*   **Model ID in Taskmaster:** `default` (This is the only model ID available for this provider)
+*   **Name in Selection:** "Claude Code CLI (Subscription)"
+*   **SWE Score:** 0.727
+*   **Description:** Uses your local Claude Code CLI (`claude` command) installation for all API calls. This model relies on your existing Claude Code subscription and local CLI setup.
+*   **Cost:** Pricing is based on your Claude Code subscription (flat rate). Taskmaster does not track per-token costs for this provider. The input/output costs in the table above will show "Subscription" or similar to reflect this.
+*   **Prerequisites:**
+    *   Claude Code CLI (`claude` command) must be installed on your system.
+    *   You must be logged in to the Claude Code CLI (e.g., `claude login` or similar, depending on the CLI's authentication mechanism).
+    *   The `claude` command must be available in your system's PATH.
+*   **Usage:** When `claude-code` is selected as a provider for a role (e.g., `main` or `fallback`) in Taskmaster (by choosing "⚡ Claude Code CLI (Subscription)" during setup), it will invoke the local `claude` command. Ensure your CLI is configured correctly.

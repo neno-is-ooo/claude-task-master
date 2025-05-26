@@ -30,6 +30,8 @@ import * as openai from '../../src/ai-providers/openai.js';
 import * as xai from '../../src/ai-providers/xai.js';
 import * as openrouter from '../../src/ai-providers/openrouter.js';
 import * as ollama from '../../src/ai-providers/ollama.js';
+import * as openaiCodex from '../../src/ai-providers/openai-codex.js';
+import * as claudeCode from '../../src/ai-providers/claude-code.js';
 // TODO: Import other provider modules when implemented (ollama, etc.)
 
 // Helper function to get cost for a specific model
@@ -103,6 +105,16 @@ const PROVIDER_FUNCTIONS = {
 		generateText: ollama.generateOllamaText,
 		streamText: ollama.streamOllamaText,
 		generateObject: ollama.generateOllamaObject
+	},
+	'openai-codex': {
+		generateText: openaiCodex.generateOpenAICodexText,
+		streamText: openaiCodex.streamOpenAICodexText,
+		generateObject: openaiCodex.generateOpenAICodexObject
+	},
+	'claude-code': {
+		generateText: claudeCode.generateClaudeCodeText,
+		streamText: claudeCode.streamClaudeCodeText,
+		generateObject: claudeCode.generateClaudeCodeObject
 	}
 	// TODO: Add entries for ollama, etc. when implemented
 };
@@ -191,7 +203,9 @@ function _resolveApiKey(providerName, session, projectRoot = null) {
 		azure: 'AZURE_OPENAI_API_KEY',
 		openrouter: 'OPENROUTER_API_KEY',
 		xai: 'XAI_API_KEY',
-		ollama: 'OLLAMA_API_KEY'
+		ollama: 'OLLAMA_API_KEY',
+		'openai-codex': 'OPENAI_CODEX_API_KEY', // Not actually used by openai-codex CLI, but for consistency
+		'claude-code': 'CLAUDE_CODE_API_KEY' // Not actually used by claude-code CLI, but for consistency
 	};
 
 	const envVarName = keyMap[providerName];
@@ -203,8 +217,8 @@ function _resolveApiKey(providerName, session, projectRoot = null) {
 
 	const apiKey = resolveEnvVariable(envVarName, session, projectRoot);
 
-	// Special handling for Ollama - API key is optional
-	if (providerName === 'ollama') {
+	// Special handling for Ollama and other CLI-based tools - API key is optional / not used via this path
+	if (providerName === 'ollama' || providerName === 'openai-codex' || providerName === 'claude-code') {
 		return apiKey || null;
 	}
 
@@ -391,8 +405,12 @@ async function _unifiedServiceRunner(serviceType, params) {
 				continue;
 			}
 
-			// Check if API key is set for the current provider and role (excluding 'ollama')
-			if (providerName?.toLowerCase() !== 'ollama') {
+			// Check if API key is set for the current provider and role (excluding 'ollama', 'openai-codex', and 'claude-code')
+			if (
+				providerName?.toLowerCase() !== 'ollama' &&
+				providerName?.toLowerCase() !== 'openai-codex' &&
+				providerName?.toLowerCase() !== 'claude-code'
+			) {
 				if (!isApiKeySet(providerName, session, effectiveProjectRoot)) {
 					log(
 						'warn',

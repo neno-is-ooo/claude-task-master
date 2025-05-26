@@ -245,6 +245,16 @@ async function runInteractiveSetup(projectRoot) {
 			value: '__CUSTOM_OLLAMA__'
 		};
 
+		const openaiCodexOption = {
+			name: '🤖 OpenAI Codex CLI (Subscription)',
+			value: '__OPENAI_CODEX__'
+		};
+
+		const claudeCodeOption = {
+			name: '⚡ Claude Code CLI (Subscription)',
+			value: '__CLAUDE_CODE__'
+		};
+
 		let choices = [];
 		let defaultIndex = 0; // Default to 'Cancel'
 
@@ -291,6 +301,8 @@ async function runInteractiveSetup(projectRoot) {
 		commonPrefix.push(cancelOption);
 		commonPrefix.push(customOpenRouterOption);
 		commonPrefix.push(customOllamaOption);
+		commonPrefix.push(openaiCodexOption);
+		commonPrefix.push(claudeCodeOption);
 
 		let prefixLength = commonPrefix.length; // Initial prefix length
 
@@ -421,6 +433,35 @@ async function runInteractiveSetup(projectRoot) {
 				setupSuccess = false;
 				return true; // Continue setup, but mark as failed
 			}
+		} else if (selectedValue === '__OPENAI_CODEX__') {
+			isCustomSelection = true;
+			// For OpenAI Codex, the model ID is usually fixed, e.g., "default"
+			// We can either prompt or assume "default". Let's assume "default" for simplicity.
+			// If prompting is preferred, uncomment the inquirer code below.
+			// const { customId } = await inquirer.prompt([
+			// 	{
+			// 		type: 'input',
+			// 		name: 'customId',
+			// 		message: `Enter the OpenAI Codex Model ID for the ${role} role (usually "default"):`,
+			// 		default: 'default'
+			// 	}
+			// ]);
+			// if (!customId) {
+			// 	console.log(chalk.yellow('No OpenAI Codex ID entered. Skipping role.'));
+			// 	return true;
+			// }
+			// modelIdToSet = customId;
+			modelIdToSet = 'default'; // Directly use 'default'
+			providerHint = 'openai-codex';
+			// No live validation needed as it's a CLI tool and model is predefined.
+			console.log(chalk.blue(`Selected OpenAI Codex CLI for ${role} role (model: ${modelIdToSet})`));
+		} else if (selectedValue === '__CLAUDE_CODE__') {
+			isCustomSelection = true;
+			// For Claude Code CLI, the model ID is usually fixed, e.g., "default"
+			modelIdToSet = 'default'; // Directly use 'default'
+			providerHint = 'claude-code';
+			// No live validation needed as it's a CLI tool and model is predefined.
+			console.log(chalk.blue(`Selected Claude Code CLI for ${role} role (model: ${modelIdToSet})`));
 		} else if (selectedValue === '__CUSTOM_OLLAMA__') {
 			isCustomSelection = true;
 			const { customId } = await inquirer.prompt([

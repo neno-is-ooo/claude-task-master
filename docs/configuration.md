@@ -62,6 +62,7 @@ Taskmaster uses two primary methods for configuration:
       - **Per-role `baseUrl` in `.taskmasterconfig`:** You can add a `baseUrl` property to any model role (`main`, `research`, `fallback`) to override the default API endpoint for that provider. If omitted, the provider's standard endpoint is used.
       - `AZURE_OPENAI_ENDPOINT`: Required if using Azure OpenAI key (can also be set as `baseUrl` for the Azure model role).
       - `OLLAMA_BASE_URL`: Override the default Ollama API URL (Default: `http://localhost:11434/api`).
+    - **Note on CLI-based Providers (Ollama, OpenAI Codex CLI, Claude Code CLI):** These providers typically do not require an API key to be set in the `.env` file or MCP `env` block for Taskmaster. They rely on their own local configuration and authentication (e.g., Ollama being served, `openai-codex login`, or `claude login`).
 
 **Important:** Settings like model ID selections (`main`, `research`, `fallback`), `maxTokens`, `temperature`, `logLevel`, `defaultSubtasks`, `defaultPriority`, and `projectName` are **managed in `.taskmasterconfig`**, not environment variables.
 
@@ -79,6 +80,44 @@ PERPLEXITY_API_KEY=pplx-your-key-here
 # AZURE_OPENAI_ENDPOINT=https://your-azure-endpoint.openai.azure.com/
 # OLLAMA_BASE_URL=http://custom-ollama-host:11434/api
 ```
+
+## Provider-Specific Configuration Details
+
+### Ollama
+
+- **Selection:** Choose an Ollama model (e.g., `ollama/mistral-small3.1:latest`) during `task-master models --setup` or by using `task-master models --set-<role>=<ollama_model_id> --ollama`.
+- **API Key:** No API key is typically required in Taskmaster's `.env`. Ollama runs as a local service.
+- **Endpoint:** The default Ollama API endpoint is `http://localhost:11434/api`. This can be overridden by setting `OLLAMA_BASE_URL` in your `.env` file or by setting the `ollamaBaseUrl` in the `global` section of your `.taskmasterconfig`.
+
+### OpenRouter
+
+- **Selection:** Choose an OpenRouter model (e.g., `openrouter/google/gemini-2.0-flash-001`) during `task-master models --setup` or by using `task-master models --set-<role>=<openrouter_model_id> --openrouter`.
+- **API Key:** Requires `OPENROUTER_API_KEY` in your `.env` file or MCP `env` block.
+- **Endpoint:** Uses the standard OpenRouter API endpoint. Can be overridden per-role with `baseUrl` in `.taskmasterconfig`.
+
+### OpenAI Codex CLI
+
+- **Selection:**
+    - Choose "🤖 OpenAI Codex CLI (Subscription)" during the interactive setup (`task-master models --setup`).
+    - This will configure the `openai-codex` provider with the model ID `default` for the selected role(s) (e.g., main, fallback).
+- **API Key:** Taskmaster does **not** manage API keys for the OpenAI Codex CLI provider.
+- **Prerequisites:**
+    - You must have the OpenAI Codex CLI installed on your system.
+    - You need to be authenticated with the CLI (e.g., by running `openai-codex login`).
+    - The `openai-codex` command must be accessible in your system's PATH.
+- **Functionality:** When a role is configured to use `openai-codex`, Taskmaster will execute the `openai-codex` command locally. Ensure your CLI is set up to use the correct underlying OpenAI model and account. Taskmaster simply acts as an orchestrator for this CLI tool.
+
+### Claude Code CLI
+
+- **Selection:**
+    - Choose "⚡ Claude Code CLI (Subscription)" during the interactive setup (`task-master models --setup`).
+    - This will configure the `claude-code` provider with the model ID `default` for the selected role(s) (e.g., main, fallback).
+- **API Key:** Taskmaster does **not** manage API keys for the Claude Code CLI provider.
+- **Prerequisites:**
+    - You must have the Claude Code CLI (`claude` command) installed on your system.
+    - You need to be authenticated with the CLI (e.g., by running `claude login` or ensuring your environment is configured for the `claude` command to work).
+    - The `claude` command must be accessible in your system's PATH.
+- **Functionality:** When a role is configured to use `claude-code`, Taskmaster will execute the `claude` command locally (typically `echo "<prompt>" | claude --print --output-format json`). Ensure your CLI is set up correctly. Taskmaster acts as an orchestrator for this CLI tool.
 
 ## Troubleshooting
 

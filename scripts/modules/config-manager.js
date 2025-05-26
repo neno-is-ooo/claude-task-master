@@ -438,7 +438,10 @@ function getParametersForRole(role, explicitRoot = null) {
  */
 function isApiKeySet(providerName, session = null, projectRoot = null) {
 	// Define the expected environment variable name for each provider
-	if (providerName?.toLowerCase() === 'ollama' || providerName?.toLowerCase() === 'claude-code') {
+	if (
+		providerName?.toLowerCase() === 'ollama' ||
+		providerName?.toLowerCase() === 'claude-code'
+	) {
 		return true; // Indicate key status is effectively "OK"
 	}
 

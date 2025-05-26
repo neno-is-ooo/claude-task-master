@@ -37,6 +37,7 @@ The provider implements three main functions:
 3. **`generateClaudeCodeObject`**: For structured JSON responses
 
 All functions use a common `executeClaudeCommand` helper that:
+
 - Spawns the `claude` CLI process
 - Sends the prompt via stdin
 - Parses the JSON response from stdout
@@ -45,19 +46,23 @@ All functions use a common `executeClaudeCommand` helper that:
 ### Configuration Updates
 
 #### `scripts/modules/ai-services-unified.js`
+
 - Added claude-code provider mapping
 - Modified `_resolveApiKey` to return null for claude-code
 
 #### `scripts/modules/config-manager.js`
+
 - Added claude-code to API key bypass list (similar to ollama)
 - Updated `isApiKeySet` and `getMcpApiKeyStatus` functions
 
 #### `scripts/modules/supported-models.json`
+
 - Added claude-code provider with zero-cost model
 
 ### Error Handling
 
 The integration handles several error cases:
+
 1. Claude Code CLI not installed
 2. Invalid JSON responses
 3. Command timeouts (30 seconds default)
@@ -68,6 +73,7 @@ The integration handles several error cases:
 ### Unit Tests
 
 Create unit tests in `tests/unit/ai-providers/claude-code.test.js` to test:
+
 - Successful command execution
 - Error handling scenarios
 - Response parsing
@@ -76,6 +82,7 @@ Create unit tests in `tests/unit/ai-providers/claude-code.test.js` to test:
 ### Integration Tests
 
 Add integration tests in `tests/integration/claude-code-integration.test.js` to verify:
+
 - Provider registration in ai-services-unified
 - Configuration loading and validation
 - End-to-end command execution
@@ -83,6 +90,7 @@ Add integration tests in `tests/integration/claude-code-integration.test.js` to 
 ### Manual Testing
 
 Test all AI-dependent commands:
+
 ```bash
 # Parse PRD
 task-master parse-prd --file prd.txt

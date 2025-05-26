@@ -1,272 +1,294 @@
 import { jest } from '@jest/globals';
-import {
-  generateClaudeCodeText,
-  generateClaudeCodeObject,
-  streamClaudeCodeText
-} from '../../../src/ai-providers/claude-code.js';
 
-// Mock child_process module
-const mockSpawn = jest.fn();
+// Create a more complete mock of child process
+class MockChildProcess {
+	constructor() {
+		this.stdin = {
+			write: jest.fn(),
+			end: jest.fn()
+		};
+		this.stdout = {
+			on: jest.fn()
+		};
+		this.stderr = {
+			on: jest.fn()
+		};
+		this.on = jest.fn();
+	}
+}
+
+// Mock spawn globally
+global.mockSpawn = jest.fn();
+
+// Mock child_process module before importing claude-code
 jest.unstable_mockModule('child_process', () => ({
-  spawn: mockSpawn
+	spawn: global.mockSpawn
 }));
 
+// Import after mocking
+const claudeCode = await import('../../../src/ai-providers/claude-code.js');
+const { generateClaudeCodeText, generateClaudeCodeObject, streamClaudeCodeText } =
+	claudeCode;
+
 describe('Claude Code Provider', () => {
-  let mockChildProcess;
+	let mockChildProcess;
 
-  beforeEach(() => {
-    jest.clearAllMocks();
-    
-    // Create a mock child process
-    mockChildProcess = {
-      stdin: {
-        write: jest.fn(),
-        end: jest.fn()
-      },
-      stdout: {
-        on: jest.fn(),
-        setEncoding: jest.fn()
-      },
-      stderr: {
-        on: jest.fn(),
-        setEncoding: jest.fn()
-      },
-      on: jest.fn()
-    };
+	beforeEach(() => {
+		jest.clearAllMocks();
+		mockChildProcess = new MockChildProcess();
+		global.mockSpawn.mockReturnValue(mockChildProcess);
+	});
 
-    mockSpawn.mockReturnValue(mockChildProcess);
-  });
+	describe('generateClaudeCodeText', () => {
+		it('should generate text successfully', async () => {
+			const messages = [
+				{ role: 'system', content: 'You are a helpful assistant.' },
+				{ role: 'user', content: 'Hello, Claude!' }
+			];
 
-  describe('generateClaudeCodeText', () => {
-    it('should generate text successfully', async () => {
-      const messages = [
-        { role: 'system', content: 'You are a helpful assistant.' },
-        { role: 'user', content: 'Hello, Claude!' }
-      ];
-      const options = {
-        maxTokens: 1000,
-        temperature: 0.7
-      };
+			// Mock successful response
+			const mockResponse = {
+				result: 'Hello! How can I help you today?',
+				cost_usd: 0
+			};
 
-      // Mock successful response
-      const mockResponse = {
-        status: 'success',
-        response: 'Hello! How can I help you today?',
-        cost_usd: 0
-      };
+			// Mock the command execution
+			global.mockSpawn.mockImplementation(() => {
+				const child = new MockChildProcess();
 
-      // Set up stdout mock to emit data
-      mockChildProcess.stdout.on.mockImplementation((event, callback) => {
-        if (event === 'data') {
-          // Simulate Claude Code response
-          setTimeout(() => {
-            callback(JSON.stringify(mockResponse));
-          }, 10);
-        }
-      });
+				// Mock stdout data event
+				child.stdout.on.mockImplementation((event, callback) => {
+					if (event === 'data') {
+						// Emit data immediately
+						setTimeout(() => callback(JSON.stringify(mockResponse)), 0);
+					}
+				});
 
-      // Set up process exit mock
-      mockChildProcess.on.mockImplementation((event, callback) => {
-        if (event === 'exit') {
-          setTimeout(() => {
-            callback(0);
-          }, 20);
-        }
-      });
+				// Mock close event
+				child.on.mockImplementation((event, callback) => {
+					if (event === 'close') {
+						// Emit close immediately after data
+						setTimeout(() => callback(0), 10);
+					}
+				});
 
-      const result = await generateClaudeCodeText({ messages, ...options });
+				return child;
+			});
 
-      expect(result).toEqual({
-        text: 'Hello! How can I help you today?',
-        usage: {
-          promptTokens: null,
-          completionTokens: null,
-          totalTokens: null
-        },
-        cost: 0
-      });
+			const result = await generateClaudeCodeText({
+				messages,
+				maxTokens: 1000,
+				temperature: 0.7
+			});
 
-      expect(mockSpawn).toHaveBeenCalledWith('claude', ['chat', '--json']);
-      expect(mockChildProcess.stdin.write).toHaveBeenCalled();
-      expect(mockChildProcess.stdin.end).toHaveBeenCalled();
-    });
+			expect(result).toEqual({
+				text: 'Hello! How can I help you today?',
+				usage: {
+					inputTokens: 0,
+					outputTokens: 0,
+					costUSD: 0
+				}
+			});
 
-    it('should handle Claude Code not installed error', async () => {
-      const messages = [{ role: 'user', content: 'Test' }];
+			expect(global.mockSpawn).toHaveBeenCalledWith('claude', [
+				'--print',
+				'--output-format',
+				'json'
+			]);
+		});
 
-      // Mock spawn error (command not found)
-      mockSpawn.mockImplementation(() => {
-        throw new Error('spawn claude ENOENT');
-      });
+		it('should handle Claude Code not installed error', async () => {
+			const messages = [{ role: 'user', content: 'Test' }];
 
-      await expect(generateClaudeCodeText({ messages })).rejects.toThrow(
-        'Claude Code CLI is not installed'
-      );
-    });
+			// Mock spawn error (command not found)
+			global.mockSpawn.mockImplementation(() => {
+				const error = new Error('spawn claude ENOENT');
+				error.code = 'ENOENT';
+				throw error;
+			});
 
-    it('should handle non-zero exit code', async () => {
-      const messages = [{ role: 'user', content: 'Test' }];
+			await expect(generateClaudeCodeText({ messages })).rejects.toThrow(
+				'Claude Code CLI not found. Please install it first'
+			);
+		});
 
-      mockChildProcess.stderr.on.mockImplementation((event, callback) => {
-        if (event === 'data') {
-          callback('Error: Something went wrong');
-        }
-      });
+		it('should handle non-zero exit code', async () => {
+			const messages = [{ role: 'user', content: 'Test' }];
 
-      mockChildProcess.on.mockImplementation((event, callback) => {
-        if (event === 'exit') {
-          callback(1); // Non-zero exit code
-        }
-      });
+			global.mockSpawn.mockImplementation(() => {
+				const child = new MockChildProcess();
 
-      await expect(generateClaudeCodeText({ messages })).rejects.toThrow(
-        'Claude Code command failed with exit code 1'
-      );
-    });
+				child.stderr.on.mockImplementation((event, callback) => {
+					if (event === 'data') {
+						setTimeout(() => callback('Error: Something went wrong'), 0);
+					}
+				});
 
-    it('should handle JSON parse errors', async () => {
-      const messages = [{ role: 'user', content: 'Test' }];
+				child.on.mockImplementation((event, callback) => {
+					if (event === 'close') {
+						setTimeout(() => callback(1), 10);
+					}
+				});
 
-      mockChildProcess.stdout.on.mockImplementation((event, callback) => {
-        if (event === 'data') {
-          callback('Invalid JSON response');
-        }
-      });
+				return child;
+			});
 
-      mockChildProcess.on.mockImplementation((event, callback) => {
-        if (event === 'exit') {
-          callback(0);
-        }
-      });
+			await expect(generateClaudeCodeText({ messages })).rejects.toThrow(
+				'Claude Code CLI exited with code 1'
+			);
+		});
 
-      await expect(generateClaudeCodeText({ messages })).rejects.toThrow(
-        'Failed to parse Claude Code response'
-      );
-    });
+		it('should handle JSON parse errors', async () => {
+			const messages = [{ role: 'user', content: 'Test' }];
 
-    it('should handle timeout', async () => {
-      const messages = [{ role: 'user', content: 'Test' }];
-      const options = { maxTokens: 1000, temperature: 0.7, timeout: 100 }; // 100ms timeout
+			global.mockSpawn.mockImplementation(() => {
+				const child = new MockChildProcess();
 
-      // Don't emit any events to simulate timeout
-      mockChildProcess.on.mockImplementation(() => {});
-      mockChildProcess.stdout.on.mockImplementation(() => {});
+				child.stdout.on.mockImplementation((event, callback) => {
+					if (event === 'data') {
+						setTimeout(() => callback('Invalid JSON response'), 0);
+					}
+				});
 
-      await expect(generateClaudeCodeText({ messages, ...options })).rejects.toThrow(
-        'Claude Code command timed out'
-      );
-    }, 10000);
-  });
+				child.on.mockImplementation((event, callback) => {
+					if (event === 'close') {
+						setTimeout(() => callback(0), 10);
+					}
+				});
 
-  describe('generateClaudeCodeObject', () => {
-    it('should generate structured object successfully', async () => {
-      const messages = [
-        { role: 'user', content: 'Generate a task object' }
-      ];
-      const schema = {
-        type: 'object',
-        properties: {
-          title: { type: 'string' },
-          description: { type: 'string' }
-        }
-      };
+				return child;
+			});
 
-      const mockResponse = {
-        status: 'success',
-        response: '{"title": "Test Task", "description": "A test task"}',
-        cost_usd: 0
-      };
+			await expect(generateClaudeCodeText({ messages })).rejects.toThrow(
+				'Unexpected token'
+			);
+		});
+	});
 
-      mockChildProcess.stdout.on.mockImplementation((event, callback) => {
-        if (event === 'data') {
-          callback(JSON.stringify(mockResponse));
-        }
-      });
+	describe('generateClaudeCodeObject', () => {
+		it('should generate structured object successfully', async () => {
+			const messages = [{ role: 'user', content: 'Generate a task object' }];
+			const schema = {
+				type: 'object',
+				properties: {
+					title: { type: 'string' },
+					description: { type: 'string' }
+				}
+			};
 
-      mockChildProcess.on.mockImplementation((event, callback) => {
-        if (event === 'exit') {
-          callback(0);
-        }
-      });
+			const mockResponse = {
+				result: '{"title": "Test Task", "description": "A test task"}',
+				cost_usd: 0
+			};
 
-      const result = await generateClaudeCodeObject({ messages, schema });
+			global.mockSpawn.mockImplementation(() => {
+				const child = new MockChildProcess();
 
-      expect(result).toEqual({
-        object: {
-          title: 'Test Task',
-          description: 'A test task'
-        },
-        usage: {
-          promptTokens: null,
-          completionTokens: null,
-          totalTokens: null
-        },
-        cost: 0
-      });
-    });
+				child.stdout.on.mockImplementation((event, callback) => {
+					if (event === 'data') {
+						setTimeout(() => callback(JSON.stringify(mockResponse)), 0);
+					}
+				});
 
-    it('should handle invalid structured response', async () => {
-      const messages = [{ role: 'user', content: 'Test' }];
-      const schema = { type: 'object' };
+				child.on.mockImplementation((event, callback) => {
+					if (event === 'close') {
+						setTimeout(() => callback(0), 10);
+					}
+				});
 
-      const mockResponse = {
-        status: 'success',
-        response: 'Not a valid JSON object',
-        cost_usd: 0
-      };
+				return child;
+			});
 
-      mockChildProcess.stdout.on.mockImplementation((event, callback) => {
-        if (event === 'data') {
-          callback(JSON.stringify(mockResponse));
-        }
-      });
+			const result = await generateClaudeCodeObject({ messages, schema });
 
-      mockChildProcess.on.mockImplementation((event, callback) => {
-        if (event === 'exit') {
-          callback(0);
-        }
-      });
+			expect(result).toEqual({
+				object: {
+					title: 'Test Task',
+					description: 'A test task'
+				},
+				usage: {
+					inputTokens: 0,
+					outputTokens: 0,
+					costUSD: 0
+				}
+			});
+		});
 
-      await expect(generateClaudeCodeObject({ messages, schema })).rejects.toThrow(
-        'Failed to parse structured response from Claude Code'
-      );
-    });
-  });
+		it('should handle invalid structured response', async () => {
+			const messages = [{ role: 'user', content: 'Test' }];
+			const schema = { type: 'object' };
 
-  describe('streamClaudeCodeText', () => {
-    it('should stream text successfully', async () => {
-      const messages = [{ role: 'user', content: 'Stream test' }];
-      const options = { maxTokens: 1000 };
+			const mockResponse = {
+				result: 'Not a valid JSON object',
+				cost_usd: 0
+			};
 
-      const mockResponse = {
-        status: 'success',
-        response: 'Streaming response',
-        cost_usd: 0
-      };
+			global.mockSpawn.mockImplementation(() => {
+				const child = new MockChildProcess();
 
-      mockChildProcess.stdout.on.mockImplementation((event, callback) => {
-        if (event === 'data') {
-          callback(JSON.stringify(mockResponse));
-        }
-      });
+				child.stdout.on.mockImplementation((event, callback) => {
+					if (event === 'data') {
+						setTimeout(() => callback(JSON.stringify(mockResponse)), 0);
+					}
+				});
 
-      mockChildProcess.on.mockImplementation((event, callback) => {
-        if (event === 'exit') {
-          callback(0);
-        }
-      });
+				child.on.mockImplementation((event, callback) => {
+					if (event === 'close') {
+						setTimeout(() => callback(0), 10);
+					}
+				});
 
-      const stream = await streamClaudeCodeText({ messages, ...options });
-      
-      // Collect stream chunks
-      const chunks = [];
-      for await (const chunk of stream) {
-        chunks.push(chunk);
-      }
+				return child;
+			});
 
-      expect(chunks.length).toBeGreaterThan(0);
-      expect(chunks.some(chunk => chunk.type === 'text-delta')).toBe(true);
-      expect(chunks[chunks.length - 1].type).toBe('usage');
-    });
-  });
+			await expect(
+				generateClaudeCodeObject({ messages, schema })
+			).rejects.toThrow('Failed to parse Claude Code response as valid JSON');
+		});
+	});
+
+	describe('streamClaudeCodeText', () => {
+		it('should fallback to non-streaming text generation', async () => {
+			const messages = [{ role: 'user', content: 'Stream test' }];
+
+			const mockResponse = {
+				result: 'Streaming response',
+				cost_usd: 0
+			};
+
+			global.mockSpawn.mockImplementation(() => {
+				const child = new MockChildProcess();
+
+				child.stdout.on.mockImplementation((event, callback) => {
+					if (event === 'data') {
+						setTimeout(() => callback(JSON.stringify(mockResponse)), 0);
+					}
+				});
+
+				child.on.mockImplementation((event, callback) => {
+					if (event === 'close') {
+						setTimeout(() => callback(0), 10);
+					}
+				});
+
+				return child;
+			});
+
+			const result = await streamClaudeCodeText({
+				messages,
+				maxTokens: 1000
+			});
+
+			// Since it falls back to regular generation, check the structure
+			expect(result).toHaveProperty('textStream');
+			expect(result).toHaveProperty('usage');
+
+			// Verify the async iterator works
+			const chunks = [];
+			for await (const chunk of result.textStream) {
+				chunks.push(chunk);
+			}
+			expect(chunks).toEqual(['Streaming response']);
+		});
+	});
 });

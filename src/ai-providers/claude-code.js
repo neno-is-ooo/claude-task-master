@@ -15,22 +15,22 @@ import { log } from '../../scripts/modules/utils.js';
  */
 function formatMessagesForCLI(messages) {
 	let prompt = '';
-	
+
 	// Find system and user messages
-	const systemMessage = messages.find(m => m.role === 'system');
-	const userMessages = messages.filter(m => m.role === 'user');
-	
+	const systemMessage = messages.find((m) => m.role === 'system');
+	const userMessages = messages.filter((m) => m.role === 'user');
+
 	// Add system prompt if exists
 	if (systemMessage && systemMessage.content) {
 		prompt += `System: ${systemMessage.content}\n\n`;
 	}
-	
+
 	// Add user messages
 	userMessages.forEach((msg, index) => {
 		if (index > 0) prompt += '\n\n';
 		prompt += msg.content;
 	});
-	
+
 	return prompt;
 }
 
@@ -44,30 +44,32 @@ function executeClaudeCommand(command, input) {
 	return new Promise((resolve, reject) => {
 		const args = command.split(' ').slice(1); // Remove 'claude' from command
 		const child = spawn('claude', args);
-		
+
 		let stdout = '';
 		let stderr = '';
-		
+
 		child.stdout.on('data', (data) => {
 			stdout += data.toString();
 		});
-		
+
 		child.stderr.on('data', (data) => {
 			stderr += data.toString();
 		});
-		
+
 		child.on('error', (error) => {
 			reject(error);
 		});
-		
+
 		child.on('close', (code) => {
 			if (code !== 0) {
-				reject(new Error(`Claude Code CLI exited with code ${code}: ${stderr}`));
+				reject(
+					new Error(`Claude Code CLI exited with code ${code}: ${stderr}`)
+				);
 			} else {
 				resolve({ stdout, stderr });
 			}
 		});
-		
+
 		// Write input to stdin
 		child.stdin.write(input);
 		child.stdin.end();
@@ -96,14 +98,14 @@ export async function generateClaudeCodeText({
 	baseUrl
 }) {
 	log('debug', `Generating Claude Code text with model preference: ${modelId}`);
-	
+
 	try {
 		// Format messages into a single prompt
 		const prompt = formatMessagesForCLI(messages);
-		
+
 		// Build the command with model selection if applicable
 		let command = `claude --print --output-format json`;
-		
+
 		// Map common model IDs to Claude Code CLI model aliases
 		if (modelId && modelId !== 'default') {
 			const modelMap = {
@@ -113,29 +115,37 @@ export async function generateClaudeCodeText({
 				'claude-sonnet-4-20250514': 'sonnet',
 				'claude-3-7-sonnet-20250219': 'sonnet'
 			};
-			
+
 			const modelAlias = modelMap[modelId] || modelId;
 			command += ` --model ${modelAlias}`;
 		}
-		
-		log('debug', `Executing Claude Code CLI with prompt length: ${prompt.length} chars`);
-		
+
+		log(
+			'debug',
+			`Executing Claude Code CLI with prompt length: ${prompt.length} chars`
+		);
+
 		// Execute the command using stdin to avoid shell escaping issues
 		const { stdout, stderr } = await executeClaudeCommand(command, prompt);
-		
+
 		if (stderr) {
 			log('warn', `Claude Code CLI stderr: ${stderr}`);
 		}
-		
+
 		// Parse the JSON response
 		const response = JSON.parse(stdout);
-		
+
 		if (response.is_error) {
-			throw new Error(`Claude Code CLI error: ${response.error || 'Unknown error'}`);
+			throw new Error(
+				`Claude Code CLI error: ${response.error || 'Unknown error'}`
+			);
 		}
-		
-		log('debug', `Claude Code CLI response received. Cost: $${response.cost_usd || 0}`);
-		
+
+		log(
+			'debug',
+			`Claude Code CLI response received. Cost: $${response.cost_usd || 0}`
+		);
+
 		// Return in the expected format
 		return {
 			text: response.result || '',
@@ -149,10 +159,15 @@ export async function generateClaudeCodeText({
 		};
 	} catch (error) {
 		if (error.code === 'ENOENT') {
-			log('error', 'Claude Code CLI not found. Please ensure it is installed and in PATH.');
-			throw new Error('Claude Code CLI not found. Please install it first: npm install -g @anthropic-ai/claude-code');
+			log(
+				'error',
+				'Claude Code CLI not found. Please ensure it is installed and in PATH.'
+			);
+			throw new Error(
+				'Claude Code CLI not found. Please install it first: npm install -g @anthropic-ai/claude-code'
+			);
 		}
-		
+
 		log('error', `Claude Code generateText failed: ${error.message}`);
 		throw error;
 	}
@@ -166,11 +181,14 @@ export async function generateClaudeCodeText({
  * @returns {Promise<object>} The generated text (not actually streamed).
  */
 export async function streamClaudeCodeText(params) {
-	log('debug', 'Claude Code CLI does not support streaming. Using regular generation.');
-	
+	log(
+		'debug',
+		'Claude Code CLI does not support streaming. Using regular generation.'
+	);
+
 	// Fall back to regular generation
 	const result = await generateClaudeCodeText(params);
-	
+
 	// Simulate a stream-like response structure
 	return {
 		textStream: {
@@ -203,20 +221,23 @@ export async function generateClaudeCodeObject({
 	mode,
 	output
 }) {
-	log('debug', `Generating Claude Code object with model preference: ${modelId}`);
-	
+	log(
+		'debug',
+		`Generating Claude Code object with model preference: ${modelId}`
+	);
+
 	try {
 		// Add schema instructions to the messages
 		const schemaInstructions = `Please respond with a valid JSON object that matches this schema: ${JSON.stringify(schema)}. Respond ONLY with the JSON object, no additional text.`;
-		
+
 		const modifiedMessages = [...messages];
-		const lastUserMessage = modifiedMessages.findLast(m => m.role === 'user');
+		const lastUserMessage = modifiedMessages.findLast((m) => m.role === 'user');
 		if (lastUserMessage) {
 			lastUserMessage.content += `\n\n${schemaInstructions}`;
 		} else {
 			modifiedMessages.push({ role: 'user', content: schemaInstructions });
 		}
-		
+
 		// Generate text response
 		const result = await generateClaudeCodeText({
 			apiKey,
@@ -226,7 +247,7 @@ export async function generateClaudeCodeObject({
 			temperature,
 			baseUrl
 		});
-		
+
 		// Parse the response as JSON
 		let parsedObject;
 		try {
@@ -238,11 +259,16 @@ export async function generateClaudeCodeObject({
 				parsedObject = JSON.parse(result.text);
 			}
 		} catch (parseError) {
-			log('error', `Failed to parse Claude Code response as JSON: ${parseError.message}`);
+			log(
+				'error',
+				`Failed to parse Claude Code response as JSON: ${parseError.message}`
+			);
 			log('debug', `Response text: ${result.text}`);
-			throw new Error('Failed to parse Claude Code response as valid JSON object');
+			throw new Error(
+				'Failed to parse Claude Code response as valid JSON object'
+			);
 		}
-		
+
 		return {
 			object: parsedObject,
 			usage: result.usage

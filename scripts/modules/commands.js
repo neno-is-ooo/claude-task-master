@@ -474,12 +474,18 @@ async function runInteractiveSetup(projectRoot) {
 			// Claude Code CLI selected
 			modelIdToSet = 'default';
 			providerHint = 'claude-code';
-			console.log(chalk.green('✓ Claude Code CLI selected. This will use your Claude Code subscription for all API calls.'));
+			console.log(
+				chalk.green(
+					'✓ Claude Code CLI selected. This will use your Claude Code subscription for all API calls.'
+				)
+			);
 			// Check if Claude Code CLI is installed
 			const execAsync = promisify(exec);
 			try {
 				await execAsync('claude --version');
-				console.log(chalk.green('✓ Claude Code CLI is installed and available.'));
+				console.log(
+					chalk.green('✓ Claude Code CLI is installed and available.')
+				);
 			} catch (error) {
 				console.error(
 					chalk.red(

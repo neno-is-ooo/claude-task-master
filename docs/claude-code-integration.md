@@ -5,6 +5,7 @@ Taskmaster now supports using Claude Code CLI as an AI provider, allowing users 
 ## Prerequisites
 
 1. Install Claude Code CLI:
+
    ```bash
    npm install -g @anthropic-ai/claude-code
    ```
@@ -30,14 +31,14 @@ Add Claude Code as a provider in your `.taskmasterconfig`:
 
 ```json
 {
-  "models": {
-    "main": {
-      "provider": "claude-code",
-      "modelId": "default",
-      "maxTokens": 64000,
-      "temperature": 0.2
-    }
-  }
+	"models": {
+		"main": {
+			"provider": "claude-code",
+			"modelId": "default",
+			"maxTokens": 64000,
+			"temperature": 0.2
+		}
+	}
 }
 ```
 
@@ -93,9 +94,9 @@ task-master update-tasks
 
 ## Cost Comparison
 
-| Provider | Cost Model | Typical Monthly Cost |
-|----------|------------|---------------------|
-| Anthropic API | Pay-per-token | $50-500+ depending on usage |
-| Claude Code CLI | Flat subscription | $10/month unlimited |
+| Provider        | Cost Model        | Typical Monthly Cost        |
+| --------------- | ----------------- | --------------------------- |
+| Anthropic API   | Pay-per-token     | $50-500+ depending on usage |
+| Claude Code CLI | Flat subscription | $10/month unlimited         |
 
 For users who already have a Claude Code subscription, this integration provides significant cost savings for Taskmaster operations.

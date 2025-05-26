@@ -67,6 +67,10 @@ export function registerAnalyzeProjectComplexityTool(server) {
 				.positive()
 				.optional()
 				.describe('Ending task ID in a range to analyze.'),
+			complexityMode: z
+				.enum(['standard', 'balanced', 'advanced'])
+				.optional()
+				.describe('Complexity analysis mode (defaults to config setting).'),
 			projectRoot: z
 				.string()
 				.describe('The directory of the project. Must be an absolute path.')
@@ -126,6 +130,7 @@ export function registerAnalyzeProjectComplexityTool(server) {
 						threshold: args.threshold,
 						research: args.research,
 						projectRoot: args.projectRoot,
+						complexityMode: args.complexityMode,
 						ids: args.ids,
 						from: args.from,
 						to: args.to

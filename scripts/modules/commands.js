@@ -1343,6 +1343,19 @@ function registerCommands(programInstance) {
 		)
 		.option('--from <id>', 'Starting task ID in a range to analyze')
 		.option('--to <id>', 'Ending task ID in a range to analyze')
+		.option(
+			'--complexity-mode <mode>',
+			'Complexity analysis mode: standard, balanced, or advanced (defaults to config)',
+			(value) => {
+				const validModes = ['standard', 'balanced', 'advanced'];
+				if (!validModes.includes(value)) {
+					throw new Error(
+						`Invalid complexity mode: ${value}. Must be one of: ${validModes.join(', ')}`
+					);
+				}
+				return value;
+			}
+		)
 		.action(async (options) => {
 			const tasksPath = options.file || 'tasks/tasks.json';
 			const outputPath = options.output;

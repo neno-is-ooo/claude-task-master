@@ -61,7 +61,8 @@ const DEFAULTS = {
 		defaultSubtasks: 5,
 		defaultPriority: 'medium',
 		projectName: 'Task Master',
-		ollamaBaseUrl: 'http://localhost:11434/api'
+		ollamaBaseUrl: 'http://localhost:11434/api',
+		complexityMode: 'balanced' // 'standard' | 'balanced' | 'advanced'
 	}
 };
 
@@ -364,6 +365,19 @@ function getProjectName(explicitRoot = null) {
 function getOllamaBaseUrl(explicitRoot = null) {
 	// Directly return value from config
 	return getGlobalConfig(explicitRoot).ollamaBaseUrl;
+}
+
+function getComplexityMode(explicitRoot = null) {
+	// Directly return value from config, default to 'balanced' if not set
+	const mode = getGlobalConfig(explicitRoot).complexityMode;
+	const validModes = ['standard', 'balanced', 'advanced'];
+
+	if (!mode || !validModes.includes(mode)) {
+		log('warn', `Invalid complexity mode: ${mode}. Using default 'balanced'.`);
+		return 'balanced';
+	}
+
+	return mode;
 }
 
 /**
@@ -749,6 +763,7 @@ export {
 	getDefaultPriority,
 	getProjectName,
 	getOllamaBaseUrl,
+	getComplexityMode,
 	getParametersForRole,
 	getUserId,
 	// API Key Checkers (still relevant)

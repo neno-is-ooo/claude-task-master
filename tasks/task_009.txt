@@ -1,49 +1,49 @@
 # Task ID: 9
-# Title: Integrate Perplexity API
-# Status: done
-# Dependencies: 5
-# Priority: low
-# Description: Add integration with Perplexity API for research-backed task generation.
+# Title: Convert MCP Server Implementation
+# Status: pending
+# Dependencies: 6
+# Priority: medium
+# Description: Migrate Model Context Protocol server implementation to TypeScript with protocol compliance
 # Details:
-Implement Perplexity integration including:
-- API authentication via OpenAI client
-- Create research-oriented prompt templates
-- Implement response handling for Perplexity
-- Add fallback to Claude when Perplexity is unavailable
-- Implement response quality comparison logic
-- Add configuration for model selection
+Convert mcp-server/ modules to TypeScript with proper typing for MCP protocol messages and handlers. Implement type-safe message parsing and validation. Add proper typing for server lifecycle management and client connections. Implement typed error responses and protocol compliance validation. Add comprehensive logging with structured, typed log entries.
 
 # Test Strategy:
-Test connectivity to Perplexity API. Verify research-oriented prompts return useful information. Test fallback mechanism by simulating Perplexity API unavailability.
+Test MCP protocol compliance with various client scenarios. Verify message parsing and validation work correctly. Test server startup, shutdown, and error handling. Ensure protocol compatibility with existing MCP clients.
 
 # Subtasks:
-## 1. Implement Perplexity API Authentication Module [done]
+## 1. Define MCP protocol message types following specification [pending]
 ### Dependencies: None
-### Description: Create a dedicated module for authenticating with the Perplexity API using the OpenAI client library. This module should handle API key management, connection setup, and basic error handling. Implement environment variable support for the PERPLEXITY_API_KEY and PERPLEXITY_MODEL variables with appropriate defaults as specified in the PRD. Include a connection test function to verify API access.
+### Description: Create TypeScript type definitions for all MCP protocol message types including requests, responses, notifications, and error messages according to the official specification
 ### Details:
+Define interfaces for protocol messages, method signatures, parameter types, and response schemas. Include proper typing for JSON-RPC 2.0 structure and MCP-specific extensions.
 
-
-## 2. Develop Research-Oriented Prompt Templates [done]
-### Dependencies: None
-### Description: Design and implement specialized prompt templates optimized for research tasks with Perplexity. Create a template system that can generate contextually relevant research prompts based on task information. These templates should be structured to leverage Perplexity's online search capabilities and should follow the Research-Backed Expansion Prompt Structure defined in the PRD. Include mechanisms to control prompt length and focus.
+## 2. Implement typed request/response handlers with validation [pending]
+### Dependencies: 9.1
+### Description: Build request/response handler system with runtime validation using the defined message types from subtask 1
 ### Details:
+Create handler registration system, implement request validation middleware, add response serialization, and ensure type safety throughout the request/response cycle.
 
-
-## 3. Create Perplexity Response Handler [done]
-### Dependencies: None
-### Description: Implement a specialized response handler for Perplexity API responses. This should parse and process the JSON responses from Perplexity, extract relevant information, and transform it into the task data structure format. Include validation to ensure responses meet quality standards and contain the expected information. Implement streaming response handling if supported by the API client.
+## 3. Add server lifecycle management with proper state typing [pending]
+### Dependencies: 9.1, 9.2
+### Description: Implement server state management system with typed states and transitions for MCP server lifecycle
 ### Details:
+Define server states (initializing, ready, error, shutdown), implement state transition logic, add lifecycle event handlers, and ensure proper cleanup on shutdown.
 
-
-## 4. Implement Claude Fallback Mechanism [done]
-### Dependencies: None
-### Description: Create a fallback system that automatically switches to the Claude API when Perplexity is unavailable or returns errors. This system should detect API failures, rate limiting, or quality issues with Perplexity responses and seamlessly transition to using Claude with appropriate prompt modifications. Implement retry logic with exponential backoff before falling back to Claude. Log all fallback events for monitoring.
+## 4. Create typed client connection and session management [pending]
+### Dependencies: 9.1, 9.2
+### Description: Build client connection handling with session management and proper typing for connection states
 ### Details:
+Implement connection pooling, session tracking, authentication handling, and connection state management with proper TypeScript typing for all connection-related operations.
 
-
-## 5. Develop Response Quality Comparison and Model Selection [done]
-### Dependencies: None
-### Description: Implement a system to compare response quality between Perplexity and Claude, and provide configuration options for model selection. Create metrics for evaluating response quality (e.g., specificity, relevance, actionability). Add configuration options that allow users to specify which model to use for different types of tasks. Implement a caching mechanism to reduce API calls and costs when appropriate.
+## 5. Implement structured logging with typed log levels and context [pending]
+### Dependencies: 9.1
+### Description: Create comprehensive logging system with typed log levels, structured context, and MCP protocol-specific logging
 ### Details:
+Define log level types, implement contextual logging with request/response correlation, add protocol-specific log formatters, and ensure proper log sanitization for sensitive data.
 
+## 6. Add protocol compliance validation and error responses [pending]
+### Dependencies: 9.1, 9.2, 9.3, 9.4, 9.5
+### Description: Implement comprehensive protocol compliance checking and standardized error response handling
+### Details:
+Create protocol validation middleware, implement MCP-compliant error response formatting, add compliance testing utilities, and ensure all error scenarios return properly typed error responses.
 

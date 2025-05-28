@@ -1,55 +1,43 @@
 # Task ID: 5
-# Title: Integrate Anthropic Claude API
-# Status: done
-# Dependencies: 1
-# Priority: high
-# Description: Set up the integration with Claude API for AI-powered task generation and expansion.
+# Title: Convert Configuration Manager Module
+# Status: pending
+# Dependencies: 2, 3
+# Priority: medium
+# Description: Migrate configuration management system to TypeScript with strict typing for all configuration options
 # Details:
-Implement Claude API integration including:
-- API authentication using environment variables
-- Create prompt templates for various operations
-- Implement response handling and parsing
-- Add error management with retries and exponential backoff
-- Implement token usage tracking
-- Create configurable model parameters
+Convert scripts/modules/config-manager to TypeScript with comprehensive type definitions for all configuration schemas. Implement configuration validation using TypeScript types and runtime checks. Add proper typing for environment variables, file-based configuration, and CLI options. Create type-safe configuration merging and validation logic. Implement configuration schema versioning with migration support.
 
 # Test Strategy:
-Test API connectivity with sample prompts. Verify authentication works correctly with different API keys. Test error handling by simulating API failures.
+Test configuration loading and validation with various input scenarios. Verify type safety prevents invalid configurations. Test configuration merging logic preserves types. Validate that existing configuration files work without changes.
 
 # Subtasks:
-## 1. Configure API Authentication System [done]
+## 1. Define comprehensive configuration type schema with all options typed [pending]
 ### Dependencies: None
-### Description: Create a dedicated module for Anthropic API authentication. Implement a secure system to load API keys from environment variables using dotenv. Include validation to ensure API keys are properly formatted and present. Create a configuration object that will store all Claude-related settings including API keys, base URLs, and default parameters.
+### Description: Create TypeScript interfaces and types for all configuration options, including nested structures, optional fields, and union types for different configuration modes
 ### Details:
+Design complete type definitions covering all configuration categories (database, server, logging, features, etc.) with proper typing for primitives, objects, arrays, and enums. Include JSDoc comments for documentation.
 
-
-## 2. Develop Prompt Template System [done]
+## 2. Implement environment variable parsing with type coercion and validation [pending]
 ### Dependencies: 5.1
-### Description: Create a flexible prompt template system for Claude API interactions. Implement a PromptTemplate class that can handle variable substitution, system and user messages, and proper formatting according to Claude's requirements. Include templates for different operations (task generation, task expansion, etc.) with appropriate instructions and constraints for each use case.
+### Description: Build system to parse environment variables and convert them to appropriate types with validation against the schema
 ### Details:
+Create parser that handles string-to-type conversion (boolean, number, array parsing), validates against schema constraints, and provides clear error messages for invalid values. Support nested object notation via dot notation or prefixes.
 
-
-## 3. Implement Response Handling and Parsing [done]
-### Dependencies: 5.1, 5.2
-### Description: Create a response handling system that processes Claude API responses. Implement JSON parsing for structured outputs, error detection in responses, and extraction of relevant information. Build utility functions to transform Claude's responses into the application's data structures. Include validation to ensure responses meet expected formats.
+## 3. Add file-based configuration loading with JSON schema validation [pending]
+### Dependencies: 5.1
+### Description: Implement configuration file loading supporting multiple formats (JSON, YAML, TOML) with schema validation
 ### Details:
+Create file loaders for different formats, generate JSON schema from TypeScript types, validate loaded configuration against schema, and provide detailed validation error reporting with file location context.
 
-
-## 4. Build Error Management with Retry Logic [done]
-### Dependencies: 5.1, 5.3
-### Description: Implement a robust error handling system for Claude API interactions. Create middleware that catches API errors, network issues, and timeout problems. Implement exponential backoff retry logic that increases wait time between retries. Add configurable retry limits and timeout settings. Include detailed logging for troubleshooting API issues.
+## 4. Create type-safe configuration merging with proper precedence rules [pending]
+### Dependencies: 5.1, 5.2, 5.3
+### Description: Build configuration merging system that combines multiple sources (defaults, files, env vars, CLI) with defined precedence and type safety
 ### Details:
+Implement deep merging logic respecting precedence order (CLI > env vars > config files > defaults), handle array merging strategies, maintain type safety throughout merge process, and provide merge conflict resolution.
 
-
-## 5. Implement Token Usage Tracking [done]
-### Dependencies: 5.1, 5.3
-### Description: Create a token tracking system to monitor Claude API usage. Implement functions to count tokens in prompts and responses. Build a logging system that records token usage per operation. Add reporting capabilities to show token usage trends and costs. Implement configurable limits to prevent unexpected API costs.
+## 5. Implement configuration migration system for version compatibility [pending]
+### Dependencies: 5.1, 5.4
+### Description: Create migration framework to handle configuration schema evolution and backward compatibility
 ### Details:
-
-
-## 6. Create Model Parameter Configuration System [done]
-### Dependencies: 5.1, 5.5
-### Description: Implement a flexible system for configuring Claude model parameters. Create a configuration module that manages model selection, temperature, top_p, max_tokens, and other parameters. Build functions to customize parameters based on operation type. Add validation to ensure parameters are within acceptable ranges. Include preset configurations for different use cases (creative, precise, etc.).
-### Details:
-
+Build migration engine that can transform old configuration formats to new schemas, maintain migration history, provide rollback capabilities, and validate migrations. Include automated migration detection and user prompts for breaking changes.
 

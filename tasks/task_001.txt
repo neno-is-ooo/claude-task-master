@@ -1,16 +1,40 @@
 # Task ID: 1
-# Title: Implement Task Data Structure
-# Status: done
+# Title: Setup TypeScript Infrastructure and Build System
+# Status: in-progress
 # Dependencies: None
 # Priority: high
-# Description: Design and implement the core tasks.json structure that will serve as the single source of truth for the system.
+# Description: Configure TypeScript compiler, tsup build system, and development tooling for the migration project
 # Details:
-Create the foundational data structure including:
-- JSON schema for tasks.json
-- Task model with all required fields (id, title, description, status, dependencies, priority, details, testStrategy, subtasks)
-- Validation functions for the task model
-- Basic file system operations for reading/writing tasks.json
-- Error handling for file operations
+Install TypeScript 5.x, tsup, and configure tsconfig.json with permissive settings (strict: false, allowJs: true, checkJs: false, esModuleInterop: true, skipLibCheck: true, noImplicitAny: false). Set target to ES2020 with NodeNext module system. Configure tsup for bundling with output to dist/ directory. Setup package.json scripts for build, type-check, and development. Configure Jest with ts-jest for TypeScript testing support. Note: Linting is handled by Biome (per PR #531) instead of ESLint.
 
 # Test Strategy:
-Verify that the tasks.json structure can be created, read, and validated. Test with sample data to ensure all fields are properly handled and that validation correctly identifies invalid structures.
+Verify TypeScript compilation works, build system produces correct output in dist/, and all development scripts execute successfully. Test that existing JavaScript files can coexist with TypeScript configuration. Confirm Jest can run TypeScript tests with ts-jest transformer.
+
+# Subtasks:
+## 1. Install TypeScript 5.x and create initial tsconfig.json [completed]
+### Dependencies: None
+### Description: Install TypeScript 5.x as a dev dependency and create a permissive tsconfig.json configuration file to enable gradual migration from JavaScript to TypeScript
+### Details:
+Install typescript@^5.0.0, create tsconfig.json with allowJs: true, checkJs: false, strict: false, and other permissive settings to allow incremental adoption
+
+## 2. Configure tsup build system [completed]
+### Dependencies: 1.1
+### Description: Setup tsup as the build tool with proper entry points, output directory configuration, and source map generation for development and production builds
+### Details:
+Install tsup, configure entry points, set output formats (ESM/CJS), enable source maps, and define build scripts in package.json
+
+## 3. Configure Jest with TypeScript support [completed]
+### Dependencies: 1.1, 1.2
+### Description: Setup Jest testing framework with ts-jest transformer and update package.json scripts for build, test, and type checking workflows
+### Details:
+Install jest, ts-jest, @types/jest, configure jest.config.js with ts-jest preset, and add npm scripts for test, build, and type-check commands
+<info added on 2025-05-27T13:41:31.953Z>
+Wait for Biome PR #531 to merge before proceeding. Once merged, configure Biome for TypeScript linting and formatting support instead of ESLint setup. This change aligns with the project's decision to adopt Biome as the primary linting and formatting tool.
+</info added on 2025-05-27T13:41:31.953Z>
+
+## 4. Configure Biome for TypeScript linting and formatting [pending]
+### Dependencies: None
+### Description: Wait for PR #531 to merge, then configure Biome to handle TypeScript linting and formatting. Add TypeScript-specific rules and ensure compatibility with the gradual migration approach.
+### Details:
+
+

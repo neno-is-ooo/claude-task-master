@@ -1,49 +1,37 @@
 # Task ID: 7
-# Title: Implement Task Expansion with Claude
-# Status: done
-# Dependencies: 3, 5
+# Title: Convert UI Components and CLI Interface
+# Status: pending
+# Dependencies: 6
 # Priority: medium
-# Description: Create functionality to expand tasks into subtasks using Claude's AI capabilities.
+# Description: Migrate user interface components and CLI interaction modules to TypeScript
 # Details:
-Build task expansion functionality including:
-- Create subtask generation prompts
-- Implement workflow for expanding a task into subtasks
-- Add context-aware expansion capabilities
-- Implement parent-child relationship management
-- Allow specification of number of subtasks to generate
-- Provide mechanism to regenerate unsatisfactory subtasks
+Convert scripts/modules/ui-components to TypeScript with proper typing for CLI interactions, prompts, and display formatting. Add type definitions for command-line arguments and options. Implement typed command handlers and validation. Add proper typing for terminal output formatting and color schemes. Ensure accessibility and internationalization support maintains type safety.
 
 # Test Strategy:
-Test expanding various types of tasks into subtasks. Verify that subtasks are properly linked to parent tasks. Check that context is properly incorporated into generated subtasks.
+Test CLI interface functionality with various input scenarios. Verify command parsing and validation work correctly. Test UI component rendering and formatting. Ensure backward compatibility with existing CLI usage patterns.
 
 # Subtasks:
-## 1. Design and Implement Subtask Generation Prompts [done]
+## 1. Type CLI argument definitions with yargs or commander types [pending]
 ### Dependencies: None
-### Description: Create optimized prompt templates for Claude to generate subtasks from parent tasks. Design the prompts to include task context, project information, and formatting instructions that ensure consistent, high-quality subtask generation. Implement a prompt template system that allows for dynamic insertion of task details, configurable number of subtasks, and additional context parameters.
+### Description: Define TypeScript types for command-line argument parsing using yargs or commander.js, including option definitions, argument validation, and command structure typing
 ### Details:
+Create type definitions for CLI commands, options, flags, and arguments. Implement proper typing for yargs/commander configuration objects, including validation schemas and help text generation.
 
-
-## 2. Develop Task Expansion Workflow and UI [done]
-### Dependencies: 7.5
-### Description: Implement the command-line interface and workflow for expanding tasks into subtasks. Create a new command that allows users to select a task, specify the number of subtasks, and add optional context. Design the interaction flow to handle the API request, process the response, and update the tasks.json file with the newly generated subtasks.
-### Details:
-
-
-## 3. Implement Context-Aware Expansion Capabilities [done]
+## 2. Convert command handlers with proper input validation and typing [pending]
 ### Dependencies: 7.1
-### Description: Enhance the task expansion functionality to incorporate project context when generating subtasks. Develop a system to gather relevant information from the project, such as related tasks, dependencies, and previously completed work. Implement logic to include this context in the Claude prompts to improve the relevance and quality of generated subtasks.
+### Description: Transform existing command handlers to use TypeScript with comprehensive input validation, error handling, and type-safe parameter processing
 ### Details:
+Refactor command handler functions to accept typed parameters from CLI parsing. Add runtime validation for user inputs, implement proper error handling with typed exceptions, and ensure type safety throughout command execution flow.
 
-
-## 4. Build Parent-Child Relationship Management [done]
-### Dependencies: 7.3
-### Description: Implement the data structure and operations for managing parent-child relationships between tasks and subtasks. Create functions to establish these relationships in the tasks.json file, update the task model to support subtask arrays, and develop utilities to navigate, filter, and display task hierarchies. Ensure all basic task operations (update, delete, etc.) properly handle subtask relationships.
+## 3. Add types for terminal output formatting and color utilities [pending]
+### Dependencies: None
+### Description: Implement TypeScript types for terminal output formatting, including color schemes, text styling, progress indicators, and layout utilities
 ### Details:
+Create type definitions for terminal color libraries (chalk, colors), text formatting options, progress bar configurations, table layouts, and other terminal UI components. Include types for ANSI escape sequences and terminal capability detection.
 
-
-## 5. Implement Subtask Regeneration Mechanism [done]
-### Dependencies: 7.1, 7.2, 7.4
-### Description: Create functionality that allows users to regenerate unsatisfactory subtasks. Implement a command that can target specific subtasks for regeneration, preserve satisfactory subtasks, and incorporate feedback to improve the new generation. Design the system to maintain proper parent-child relationships and task IDs during regeneration.
+## 4. Implement typed prompt system for user interactions [pending]
+### Dependencies: 7.2, 7.3
+### Description: Build a comprehensive typed prompt system for interactive user input, including various prompt types, validation, and response handling
 ### Details:
-
+Create TypeScript interfaces for different prompt types (text, select, confirm, password). Implement typed validation functions, response parsing, and error handling. Include support for conditional prompts and multi-step user interactions with proper type flow.
 

@@ -1,55 +1,55 @@
 # Task ID: 6
-# Title: Build PRD Parsing System
-# Status: done
-# Dependencies: 1, 5
+# Title: Migrate Task Manager Core Modules
+# Status: pending
+# Dependencies: 2, 4, 5
 # Priority: high
-# Description: Create the system for parsing Product Requirements Documents into structured task lists.
+# Description: Convert core task management business logic to TypeScript with full type coverage
 # Details:
-Implement PRD parsing functionality including:
-- PRD file reading from specified path
-- Prompt engineering for effective PRD parsing
-- Convert PRD content to task structure via Claude API
-- Implement intelligent dependency inference
-- Add priority assignment logic
-- Handle large PRDs by chunking if necessary
+Convert scripts/modules/task-manager and related core modules to TypeScript. Implement proper typing for task operations (create, update, delete, query). Add type-safe dependency resolution and validation. Implement typed event system for task state changes. Add proper error handling with custom typed exceptions. Ensure task serialization/deserialization maintains type safety.
 
 # Test Strategy:
-Test with sample PRDs of varying complexity. Verify that generated tasks accurately reflect the requirements in the PRD. Check that dependencies and priorities are logically assigned.
+Run comprehensive task management tests to ensure functionality preservation. Test type safety in task operations and dependency resolution. Verify task state transitions are properly typed. Test serialization round-trip maintains type integrity.
 
 # Subtasks:
-## 1. Implement PRD File Reading Module [done]
+## 1. Type task CRUD operations with proper return types and error handling [pending]
 ### Dependencies: None
-### Description: Create a module that can read PRD files from a specified file path. The module should handle different file formats (txt, md, docx) and extract the text content. Implement error handling for file not found, permission issues, and invalid file formats. Add support for encoding detection and proper text extraction to ensure the content is correctly processed regardless of the source format.
+### Description: Implement strongly typed Create, Read, Update, Delete operations for tasks with comprehensive error handling and proper return types
 ### Details:
+Define TypeScript interfaces for task operations, implement type-safe CRUD methods with Result<T, Error> pattern, add validation for input parameters, and ensure proper error propagation
 
-
-## 2. Design and Engineer Effective PRD Parsing Prompts [done]
-### Dependencies: None
-### Description: Create a set of carefully engineered prompts for Claude API that effectively extract structured task information from PRD content. Design prompts that guide Claude to identify tasks, dependencies, priorities, and implementation details from unstructured PRD text. Include system prompts, few-shot examples, and output format specifications to ensure consistent results.
-### Details:
-
-
-## 3. Implement PRD to Task Conversion System [done]
+## 2. Implement custom exception hierarchy for task operations [pending]
 ### Dependencies: 6.1
-### Description: Develop the core functionality that sends PRD content to Claude API and converts the response into the task data structure. This includes sending the engineered prompts with PRD content to Claude, parsing the structured response, and transforming it into valid task objects that conform to the task model. Implement validation to ensure the generated tasks meet all requirements.
+### Description: Create a comprehensive exception hierarchy specifically for task operations with typed error categories
 ### Details:
+Design base TaskException class, implement specific exceptions like TaskNotFoundError, InvalidTaskStateError, DependencyViolationError, and ensure proper error typing throughout the system
 
-
-## 4. Build Intelligent Dependency Inference System [done]
-### Dependencies: 6.1, 6.3
-### Description: Create an algorithm that analyzes the generated tasks and infers logical dependencies between them. The system should identify which tasks must be completed before others based on the content and context of each task. Implement both explicit dependency detection (from Claude's output) and implicit dependency inference (based on task relationships and logical ordering).
+## 3. Implement typed dependency graph resolution with cycle detection [pending]
+### Dependencies: 6.1, 6.2
+### Description: Build a type-safe dependency graph system that can resolve task dependencies and detect circular dependencies
 ### Details:
+Create Graph<Task> data structure, implement topological sorting algorithm, add cycle detection using DFS, and provide typed interfaces for dependency resolution
 
-
-## 5. Implement Priority Assignment Logic [done]
-### Dependencies: 6.1, 6.3
-### Description: Develop a system that assigns appropriate priorities (high, medium, low) to tasks based on their content, dependencies, and position in the PRD. Create algorithms that analyze task descriptions, identify critical path tasks, and consider factors like technical risk and business value. Implement both automated priority assignment and manual override capabilities.
+## 4. Create typed event system for task state transitions and observers [pending]
+### Dependencies: 6.2
+### Description: Implement a strongly typed event system to handle task state changes and notify observers
 ### Details:
+Define TaskEvent types, implement EventEmitter<TaskEvent> pattern, create observer interfaces, and ensure type safety for event handlers and state transitions
 
-
-## 6. Implement PRD Chunking for Large Documents [done]
-### Dependencies: 6.1, 6.5, 6.3
-### Description: Create a system that can handle large PRDs by breaking them into manageable chunks for processing. Implement intelligent document segmentation that preserves context across chunks, tracks section relationships, and maintains coherence in the generated tasks. Develop a mechanism to reassemble and deduplicate tasks generated from different chunks into a unified task list.
+## 5. Add type-safe task serialization/deserialization with schema validation [pending]
+### Dependencies: 6.1, 6.2
+### Description: Implement robust serialization system with schema validation for task persistence and data exchange
 ### Details:
+Create JSON schema definitions, implement Serializer<Task> interface, add validation using libraries like Zod or Joi, and ensure type safety during data transformation
 
+## 6. Type task query and filtering operations with builder pattern [pending]
+### Dependencies: 6.1, 6.2
+### Description: Implement a type-safe query builder system for filtering and searching tasks with fluent API
+### Details:
+Create TaskQueryBuilder class with fluent interface, implement type-safe filter methods, add support for complex queries, and ensure proper typing for query results
+
+## 7. Add comprehensive business rule validation with typed constraints [pending]
+### Dependencies: 6.1, 6.2, 6.3, 6.4, 6.5, 6.6
+### Description: Implement a comprehensive validation system for business rules with strongly typed constraints
+### Details:
+Define ValidationRule<T> interfaces, implement constraint validators, create business rule engine, and integrate with all task operations to ensure data integrity and business logic compliance
 

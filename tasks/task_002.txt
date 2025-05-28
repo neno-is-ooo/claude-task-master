@@ -1,16 +1,46 @@
 # Task ID: 2
-# Title: Develop Command Line Interface Foundation
+# Title: Create Core Type Definitions Structure
 # Status: done
 # Dependencies: 1
 # Priority: high
-# Description: Create the basic CLI structure using Commander.js with command parsing and help documentation.
+# Description: Establish the types/ directory structure and define fundamental domain types for tasks, AI providers, and core interfaces
 # Details:
-Implement the CLI foundation including:
-- Set up Commander.js for command parsing
-- Create help documentation for all commands
-- Implement colorized console output for better readability
-- Add logging system with configurable levels
-- Handle global options (--help, --version, --file, --quiet, --debug, --json)
+Create types/ directory with subdirectories: models/, api/, utils/. Define core interfaces in types/models/task.ts including Task, Subtask, TaskStatus, TaskPriority with proper type annotations. Create AIProvider interface in types/models/ai.ts with methods generateTasks(), expandTask(), updateTask(). Define utility types for configuration, validation, and common patterns. Ensure all types follow TypeScript best practices with proper generics and constraints.
 
 # Test Strategy:
-Test each command with various parameters to ensure proper parsing. Verify help documentation is comprehensive and accurate. Test logging at different verbosity levels.
+Create type assertion tests to verify interface compatibility. Test type definitions compile without errors. Validate that types can be imported and used correctly. Add basic unit tests for type guards and validators.
+
+# Subtasks:
+## 1. Create types/ directory structure with models/, api/, and utils/ subdirectories [done]
+### Dependencies: None
+### Description: Set up the foundational directory structure for TypeScript type definitions, organizing them into logical categories for models, API interfaces, and utility types
+### Details:
+Create the main types/ directory with three subdirectories: models/ for domain entities, api/ for service interfaces, and utils/ for helper types and type utilities
+
+## 2. Define Task and Subtask interfaces with complete property typing and status enums [done]
+### Dependencies: 2.1
+### Description: Create comprehensive TypeScript interfaces for Task and Subtask entities with all required properties, optional fields, and status enumeration types
+### Details:
+Define interfaces with properties like id, title, description, status, dependencies, timestamps, and create corresponding status enums (pending, in-progress, completed, failed)
+
+## 3. Create AIProvider interface hierarchy with method signatures for all provider operations [done]
+### Dependencies: 2.1
+### Description: Design a comprehensive interface hierarchy for AI providers including base interfaces and specific implementations for different AI services
+### Details:
+Define base AIProvider interface with methods for task breakdown, execution, monitoring, and create specific interfaces for different providers (OpenAI, Anthropic, etc.)
+<info added on 2025-05-28T14:42:22.411Z>
+Implemented AIProvider interface hierarchy in types/models/ai.ts with base AIProvider interface containing generateText, streamText, and generateObject methods. Extended with TaskAIProvider for task-specific operations. Added comprehensive parameter and result types for all AI operations.
+</info added on 2025-05-28T14:42:22.411Z>
+
+## 4. Implement utility types for validation, type guards, and common patterns [done]
+### Dependencies: 2.1, 2.2, 2.3
+### Description: Create reusable utility types, type guards, and common TypeScript patterns to support type safety throughout the application
+### Details:
+Implement type guards for runtime type checking, validation utility types, generic helper types, and common patterns like Result types and Optional types
+
+## 5. Write type assertion tests to verify interface compatibility and type safety [done]
+### Dependencies: 2.2, 2.3, 2.4
+### Description: Create comprehensive test suite to validate that all type definitions work correctly and maintain compatibility across the system
+### Details:
+Write TypeScript compilation tests, type assertion tests, and compatibility tests to ensure all interfaces work together correctly and catch type errors early
+

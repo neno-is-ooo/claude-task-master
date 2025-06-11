@@ -59,7 +59,14 @@ describe('Roo Integration', () => {
 		fs.mkdirSync(path.join(tempDir, '.roo', 'rules'), { recursive: true });
 
 		// Create mode-specific rule directories
-		const rooModes = ['architect', 'ask', 'orchestrator', 'code', 'debug', 'test'];
+		const rooModes = [
+			'architect',
+			'ask',
+			'orchestrator',
+			'code',
+			'debug',
+			'test'
+		];
 		for (const mode of rooModes) {
 			fs.mkdirSync(path.join(tempDir, '.roo', `rules-${mode}`), {
 				recursive: true

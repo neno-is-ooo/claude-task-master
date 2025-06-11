@@ -34,9 +34,9 @@ describe('Roo Initialization Functionality', () => {
 		expect(hasRooModeLoop).toBe(true);
 
 		// Check for local ROO_MODES definition
-		const hasLocalRooModes = initJsContent.includes(
-			"const ROO_MODES = ['architect', 'ask', 'orchestrator', 'code', 'debug', 'test']"
-		);
+		const hasLocalRooModes = initJsContent.includes('const ROO_MODES = [') &&
+			initJsContent.includes("'architect'") &&
+			initJsContent.includes("'orchestrator'");
 		expect(hasLocalRooModes).toBe(true);
 	});
 

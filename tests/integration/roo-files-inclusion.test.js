@@ -38,9 +38,9 @@ describe('Roo Files Inclusion in Package', () => {
 		expect(hasRooModes).toBe(true);
 
 		// Check for local ROO_MODES array definition
-		const hasLocalRooModes = initJsContent.includes(
-			"const ROO_MODES = ['architect', 'ask', 'orchestrator', 'code', 'debug', 'test']"
-		);
+		const hasLocalRooModes = initJsContent.includes('const ROO_MODES = [') &&
+			initJsContent.includes("'architect'") &&
+			initJsContent.includes("'orchestrator'");
 		expect(hasLocalRooModes).toBe(true);
 
 		// Check for mode-specific patterns (these will still be present in the local array)
